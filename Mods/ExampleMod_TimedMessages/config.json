@@ -1,0 +1,9 @@
+{
+    "messages": [
+        ["This game is still in development!", "Please report any bugs you find."],
+        ["Dont forget to join our discord!"],
+        ["Want a feature?", "send us a message on discord!"],
+        ["This server is just an example of the engine!", "This is how mods can impact your gameplay!"]
+    ],
+    "interval": 120
+}
