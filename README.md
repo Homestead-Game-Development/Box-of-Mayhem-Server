@@ -1,8 +1,8 @@
 # How to setup
 How to setup:
-Step 1: Install NodeJS
-Step 2: open command line in the folder
-Step 3: Run the command
+- Step 1: Install NodeJS
+- Step 2: open command line in the folder
+- Step 3: Run the command
 ```
 npm install
 ```
