@@ -1,6 +1,6 @@
 let mod = {}
 
-mod.name = "core commands";
+mod.name = "0_core_commands";
 mod.version = [0,0,1]
 mod.description = "The core commands for the game";
 
