@@ -3,7 +3,7 @@ let mymod = {}
 
 require("./commands.js");
 
-function processMessage(text) {
+function processMessage(text, player, username, chatmsg) {
     const re = /^"[^"]*"$/; // Check if argument is surrounded with double-quotes
     const re2 = /^([^"]|[^"].*?[^"])$/; // Check if argument is NOT surrounded with double-quotes
   
@@ -26,6 +26,8 @@ function processMessage(text) {
     for(let index = 0; index < arr.length; index++) {
         if(arr[index][0]=='"') {
             arr[index] = arr[index].substring(1,arr[index].length-1);
+        }else if(arr[index]=="@s") {
+          arr[index] = username;
         }
     }
   
@@ -38,7 +40,7 @@ events.register("onPlayerChat", function(eventData, username, chatmessage) {
         eventData.sendMessage = false;
 
         //This processes the message and splits it into arguments
-        let args = processMessage(chatmessage.substring(1));
+        let args = processMessage(chatmessage.substring(1), eventData.player, username, chatmessage);
 
         //Here we are handling the arguments
         let cmd = args.shift();
