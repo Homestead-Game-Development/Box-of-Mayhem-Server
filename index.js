@@ -6,10 +6,23 @@ mkdir = function (dir) { if (!fs.existsSync(dir)) { fs.mkdirSync(dir); } }
 mkdir("./Data/");
 mkdir("./Data/client/");
 
+//Requiring all the networking libraries
+require("./Data/networking/index.js");
+
+
+let val = 10;
+let writer = bufferWriter();
+(writer.writeInt(val));
+console.log(writer.getData())
+console.log("Done")
+
+
+
 blockdb = require("./blockdb.js");
 
 //This is for handling streaming assets to the clients once they join
 assetstreamer = require("./assetstreamer.js");
+
 
 //Here we are handling loading new mods
 modloader = require("./modloader.js");
@@ -17,13 +30,6 @@ modloader = require("./modloader.js");
 
 //require("./engine/init.js");
 server = require("./server.js");
-
-
-blockdb.createBlockMacro(
-    0,//block ID
-    "becrock",//block name
-    assetstreamer.textureids["bedrock.block.png"] // Texture
-);
 
 
 
