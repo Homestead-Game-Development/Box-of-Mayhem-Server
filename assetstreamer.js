@@ -90,10 +90,22 @@ function base64_encode(file) {
     return buff.toString('base64');
 }
 
+function image_binary_encode(file) {
+    // read binary data
+    let bitmap = fs.readFileSync(file);
+    let buff = Buffer.from(bitmap);
+    var binaryData= Uint8Array.from(buff);
+    let ret = [];
+    for(let i = 0; i < binaryData.length; i++) {
+        ret[ret.length] = binaryData[i];
+    }
+    return ret;
+}
+
 /*
 */
 handleTable = function(hash, relitivedir) {
-    console.log
+    //console.log
     if(hash["children"]) {
         //console.log(relitivedir);
         for(index in hash.children) {
@@ -102,13 +114,13 @@ handleTable = function(hash, relitivedir) {
     }else{
         let imgData = getSync(relitivedir+"/"+hash.name);
         //Here we are converting to our own format
-        let b64data = base64_encode(relitivedir+"/"+hash.name);
+        let imgfiledata = base64_encode(relitivedir+"/"+hash.name);
 
         //Server sided information
         let img = {};
         img.width = imgData.width;
         img.height = imgData.height;
-        img.data = b64data;
+        img.data = imgfiledata;
         img.hash = hash.hash;
         img.name = hash.name;
         img.image_path = relitivedir+hash.name;
@@ -118,6 +130,7 @@ handleTable = function(hash, relitivedir) {
             assetstreamer.network_images_size -= assetstreamer.files[img.name].size
         }else{
             console.log("Loading image: " + img.name);
+            //console.log(imginarydata);
         }
 
         assetstreamer.files[img.name] = img;
@@ -163,9 +176,8 @@ hashElement('./Mods', options)
             console.log("Global hash: " + assetstreamer.hash + " network_image_size: ( [Bandwidth] " + (bandwithMb) + " Mb / [Physical storage/ram] " + bandwithMB + " MB ) for " + (Object.keys(assetstreamer.network_images).length)  + " images");
             
             //Constructing the initial message
-            assetstreamer.initial_message = {};
-            assetstreamer.initial_message.hash = assetstreamer.hash;
-            assetstreamer.initial_message.fileCount = Object.keys(assetstreamer.network_images).length
+            assetstreamer.hash = assetstreamer.hash;
+            assetstreamer.fileCount = Object.keys(assetstreamer.network_images).length
             assetstreamer.finished = true;
         }catch(e) {
             console.error("ERROR handling hash:");

@@ -281,6 +281,7 @@ try {
                         let p = bufferReader(binary);
                         let msgid = p.readUShort();
                         console.log("Handling message: " + msgid);
+                        let writer = bufferWriter();
 
                         switch(msgid) {
                            case messageids.server.creds:
@@ -313,15 +314,12 @@ try {
                                           console.log("Username: " + response.username);
                                           authenticatedUserSockets.push(ws);
 
-                                          
-                                          let writer = bufferWriter();
                                           writer.writeInt(messageids.client.AcceptedSessionKey);
                                           writer.writeString(userdata.username);
                                           ws.send(writer.getData());
 
                                        }else{
                                           //It has failed
-                                          let writer = bufferWriter();
                                           writer.writeInt(messageids.client.FailedSessionKey);
                                           ws.send(writer.getData());
                                        }
@@ -340,11 +338,76 @@ try {
                               console.log("Retreiving initial hash message?");
                               if(hasSentInitialHash==false) {
                                  console.log("Sending initial texture hash to " + userdata.username);
+                                 //assetstreamer.hash
+                                 //assetstreamer.fileCount
                                  /*reply(
                                     ws, "ReceiveInitialHash", assetstreamer.initial_message
                                  );*/
+                                 let writer = bufferWriter();
+                                 writer.writeInt(messageids.client.ReceiveInitialHash);
+                                 writer.writeString(assetstreamer.hash);
+                                 writer.writeInt(assetstreamer.fileCount);
+
+                                 ws.send(writer.getData());
                                  hasSentInitialHash = true;
                               }
+                           break;
+
+                           case messageids.server.RequestHashList:
+                              console.log("Player RequestHashList");
+                              
+                              writer.writeInt(messageids.client.ReceiveHashList);
+
+                              //Writing the amount of hashes
+                              writer.writeInt(assetstreamer.network_hashes.length);
+                              //Writing the hashes
+                              for(let i = 0; i < assetstreamer.network_hashes.length; i++) {
+                                 writer.writeString(assetstreamer.network_hashes[i].name);
+                                 writer.writeString(assetstreamer.network_hashes[i].hash);
+                              }
+
+                              ws.send(writer.getData());
+                              
+
+                              /*
+                              console.log("Sending hash list to " + userdata.username + " / " + JSON.stringify(assetstreamer.network_hashes).length);
+                              reply(
+                                 ws, "ReceiveHashList", {"hash_list":(assetstreamer.network_hashes)}
+                              );
+                              */
+                           break;
+
+                           case messageids.server.RequestCacheFile:
+                              let imgIndex = p.readInt();
+                              let hashedImageFromIndex = assetstreamer.network_hashes[imgIndex];
+                              let imgname = hashedImageFromIndex.name;
+                              let img = assetstreamer.network_images[imgname];
+                              /*
+                              img.network_image.width = img.width;
+                              img.network_image.height = img.height;
+                              img.network_image.hash = img.hash;
+                              img.network_image.name = img.name;
+                              img.network_image.data = img.data;
+                              */
+                              console.log("Sending " + imgname + " to " + userdata.username);
+                              
+                              //let writer = bufferWriter();
+                              writer.writeInt(messageids.client.ReceiveCacheImage);
+                              writer.writeInt   (img.width);
+                              writer.writeInt   (img.height);
+                              writer.writeString(img.hash);
+                              writer.writeString(img.name);
+
+                              //Writing the actual image
+                              writer.writeString(img.data);
+                              //writer.writeInt   (img.data.length);
+                              //for(let i = 0; i < img.data.length; i++) {
+                              //   writer.writeByte(img.data.length[i]);
+                              //}
+
+                              ws.send(writer.getData());
+         
+                              //reply(ws, "ReceiveCacheImage", {img:img});
                            break;
                         }
                      }catch(e2) {
