@@ -409,6 +409,26 @@ try {
          
                               //reply(ws, "ReceiveCacheImage", {img:img});
                            break;
+
+                           case messageids.server.RequestBlockData:
+                              if(hasReceivedBlockData==false) {//Quick debounce
+                                 hasReceivedBlockData = true;
+                                 //console.log(blockdb.data);
+                                 //console.log(JSON.toString(blockdb.data));
+
+                                 writer.writeInt(messageids.client.ReceiveBlockData);
+                                 writer.writeInt(blockdb.data.blocks.length);
+                                 for(let i = 0; i < blockdb.data.blocks.length; i++) {
+                                    blockdb.data.blocks[i].writeToStream(writer);
+                                 }
+                                 ws.send(writer.getData());
+
+                                 //reply(ws, "ReceiveBlockData", blockdb.data);
+                              }
+                           break;
+
+                           default:
+                              console.log("UNHANDLED MESSAGE ID: " + msgid);
                         }
                      }catch(e2) {
                         console.error(e2);
