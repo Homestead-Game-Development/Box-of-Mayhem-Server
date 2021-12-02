@@ -400,10 +400,6 @@ try {
 
                               //Writing the actual image
                               writer.writeString(img.data);
-                              //writer.writeInt   (img.data.length);
-                              //for(let i = 0; i < img.data.length; i++) {
-                              //   writer.writeByte(img.data.length[i]);
-                              //}
 
                               ws.send(writer.getData());
          
@@ -426,6 +422,67 @@ try {
                                  //reply(ws, "ReceiveBlockData", blockdb.data);
                               }
                            break;
+
+                           //CONVERT
+                           case messageids.server.LogInWorld:
+                              _server.broadcastMessage(userdata.username + " has logged in.");
+         
+                              let pos = {
+                                 x: 0,
+                                 y: 200,
+                                 z: 0
+                              }
+                              userdata.x = pos.x;
+                              userdata.y = pos.y;
+                              userdata.z = pos.z;
+                              
+                              let playerWriter = bufferWriter();
+                              playerWriter.writeInt(messageids.client.LogInWorld);
+                              playerWriter.writeInt(pos.x);
+                              playerWriter.writeInt(pos.y);
+                              playerWriter.writeInt(pos.z);
+                              ws.send(playerWriter.getData());
+                              
+                              //Sending the player the
+                              for(const[key, value] of Object.entries(playerdatabase)) {
+                                 if(value.id != userdata.id) {//Ignore ourself
+                                    
+                                    let otherPlayerWriter = bufferWriter();
+                                    otherPlayerWriter.writeInt(messageids.client.OtherPlayerLogedIn);
+                                    otherPlayerWriter.writeString(value.username);
+                                    otherPlayerWriter.writeInt(value.x);
+                                    otherPlayerWriter.writeInt(value.y);
+                                    otherPlayerWriter.writeInt(value.z);
+                                    otherPlayerWriter.writeInt(value.id);
+                                    ws.send(otherPlayerWriter.getData());
+
+                                 }
+                              }
+         
+                              _server.broadcastPacketFromSender(ws, "OtherPlayerLogedIn", {
+                                 name: userdata.username,
+                                 x: pos.x,
+                                 y: pos.y,
+                                 z: pos.z,
+                                 id: userdata.id
+                              });
+                              
+                              Events.fire("onPlayerLogin", userdata.username, ws);
+                           break;
+                           
+                           case messageids.server.RequestChunk:
+                              let ch = worldengine.GetChunk(p.readInt(), p.readInt(), p.readInt())//chunk.blocks
+                              
+                              writer.writeInt(messageids.client.RequestChunk);
+
+                              
+
+                              ws.send(writer.getData());
+                              /*
+                              reply(ws, "RequestChunk", {
+                                 chunk:ch.network
+                              });
+                              */
 
                            default:
                               console.log("UNHANDLED MESSAGE ID: " + msgid);
