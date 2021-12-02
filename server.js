@@ -271,22 +271,83 @@ try {
                      //}
                   //}catch(e) {*/
                      try {
-                        console.log(e);
-                        console.log("Data type not buffer, treating as array?");
 
                         let binary = [];
                         for(let index=0; index<data.length; index++) {
                            binary[index] = data[index];
                         }
+                        
 
                         let p = bufferReader(binary);
-                        switch(p.readUShort()) {
-                           case messageids.server.creds:
+                        let msgid = p.readUShort();
+                        console.log("Handling message: " + msgid);
 
+                        switch(msgid) {
+                           case messageids.server.creds:
+                              let key = p.readString();
+                              console.log("Handling key: " + key);
+                              let encodedData = encodeURIComponent("{\"action\":\"get\",\"key\":\""+key+"\"}");
+                              console.log(encodedData);
+                              http.get(`http://community.homesteadgamedevelopment.com:20001/`+encodeURIComponent(`{"action":"get","key":"${key}"}`), (response) => {
+                                 console.log("one?");
+                                 let chunks_of_data = [];
+      
+                                 response.on('data', (fragments) => {
+                                    chunks_of_data.push(fragments);
+                                 });
+                                 
+                                 response.on('end', () => {
+                                    let response_body = Buffer.concat(chunks_of_data);
+                                    console.log("Authentication message response body: " + response_body);
+                                    // response body
+                                    let response_message = response_body.toString();
+                                    console.log("Authentication message response message: " + response_message);
+         
+                                    try {
+                                       let response = JSON.parse(response_message);
+                                       if(response.success) {
+                                          //It has passed!
+                                          userdata.authenticated = true;
+                                          userdata.username = response.username;
+                                          console.log("Authenticated user")
+                                          console.log("Username: " + response.username);
+                                          authenticatedUserSockets.push(ws);
+
+                                          
+                                          let writer = bufferWriter();
+                                          writer.writeInt(messageids.client.AcceptedSessionKey);
+                                          writer.writeString(userdata.username);
+                                          ws.send(writer.getData());
+
+                                       }else{
+                                          //It has failed
+                                          let writer = bufferWriter();
+                                          writer.writeInt(messageids.client.FailedSessionKey);
+                                          ws.send(writer.getData());
+                                       }
+                                    }catch(e) {
+                                       console.error(e);
+                                    }
+                                 });
+         
+                                 response.on('error', (error) => {
+                                    console.log("AUTHENTICATION HTTP ERROR?: " + error);
+                                 });
+                              });
+                           break;
+                        
+                           case messageids.server.RequestInitialTextureHash:
+                              console.log("Retreiving initial hash message?");
+                              if(hasSentInitialHash==false) {
+                                 console.log("Sending initial texture hash to " + userdata.username);
+                                 /*reply(
+                                    ws, "ReceiveInitialHash", assetstreamer.initial_message
+                                 );*/
+                                 hasSentInitialHash = true;
+                              }
                            break;
                         }
                      }catch(e2) {
-                        console.error(e);
                         console.error(e2);
                      }
                   //}
@@ -329,10 +390,10 @@ try {
          
          //Sending data to the client that joins
          setTimeout(function() {
-            //reply(ws, "Init", {test:"123"});
             let writer = bufferWriter();
-            writer.writeInt(100);
-            writer.writeInt(25);
+
+            //Sending the initial message, to let the client know we are ready to start initializing.
+            writer.writeInt(messageids.client.Init);
 
             ws.send(writer.getData());
          }, 300);
