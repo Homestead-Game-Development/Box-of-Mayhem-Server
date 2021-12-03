@@ -18,7 +18,7 @@ bufferReader = function(data) {
     //Return: 32-Bit Integer
     p.readInt = function() {
         let bytedata = p.readBytes(4);
-        console.log(bytedata);
+        //console.log(bytedata);
         bytedata.reverse();
         return Buffer.from(bytedata).readInt32BE();
     }
@@ -38,7 +38,7 @@ bufferReader = function(data) {
     //Returns: String
     p.readString = function() {
         let size = p.readInt();
-        console.log("string size: " + size);
+        //console.log("string size: " + size);
         let msg = "";
         while(size>0) {
             size--;

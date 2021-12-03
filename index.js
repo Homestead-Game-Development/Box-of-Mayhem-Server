@@ -7,7 +7,7 @@ mkdir("./Data/");
 mkdir("./Data/client/");
 
 //Requiring all the networking libraries
-require("./Data/networking/index.js");
+require("./Libs/networking/index.js");
 
 
 let val = 10;

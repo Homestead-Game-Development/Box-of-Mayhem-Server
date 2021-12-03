@@ -5,7 +5,7 @@ try {
    var port = 20002;
    var wss;
 
-   var reply = function(ws, id, data) {
+   var reply2 = function(ws, id, data) {
       ws.send(JSON.stringify({id:id, md:JSON.stringify(data)}));
    }
 
@@ -21,9 +21,11 @@ try {
    _server.broadcastMessage = function(msg) {
       authenticatedUserSockets.forEach(_ws => {
          try {
-            reply(_ws, "Chat", {
-               msg:msg
-            });
+            
+            //let writer = bufferWriter();
+            writer.writeInt      (messageids.client.Chat);
+            writer.writeString   (msg);
+            ws.send(writer.getData());
          }catch(e) {
 
          }
@@ -471,11 +473,32 @@ try {
                            break;
                            
                            case messageids.server.RequestChunk:
-                              let ch = worldengine.GetChunk(p.readInt(), p.readInt(), p.readInt())//chunk.blocks
-                              
-                              writer.writeInt(messageids.client.RequestChunk);
+                              try {
+                                 let ch = worldengine.GetChunk(p.readInt(), p.readInt(), p.readInt())//chunk.blocks
+                                 let netdata = ch.network;
+                                 
+                                 writer.writeInt(messageids.client.RequestChunk);
 
-                              
+                                 writer.writeInt(netdata.x);
+                                 writer.writeInt(netdata.y);
+                                 writer.writeInt(netdata.z);
+                                 
+                                 writer.writeInt(16*16*16);
+                                 for(let ____i = 0; ____i < 16*16*16; ____i++) {
+                                    let block = netdata.blocks[____i];
+                                    writer.writeInt(block);
+                                 }
+                              }catch(e) {
+                                 console.error(e);
+                              }
+                              /*
+                              network: {
+                                 [int]   x
+                                 [int]   y
+                                 [int]   z
+                                 [int[]] blocks
+                              }
+                              */
 
                               ws.send(writer.getData());
                               /*
