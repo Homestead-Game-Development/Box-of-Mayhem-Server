@@ -47,11 +47,18 @@ bufferReader = function(data) {
         return msg;
     }
 
-    //Retun: Unsigned 16-Bit Short
+    //Returns: Unsigned 16-Bit Short
     p.readUShort = function() {
         let bytedata = p.readBytes(2);
         bytedata.reverse();
         return Buffer.from(bytedata).readUInt16BE();
+    }
+
+    //Returns: Float
+    p.readFloat = function() {
+        let bytedata = p.readBytes(4);
+        bytedata.reverse();
+        return Buffer.from(bytedata).readFloatBE();
     }
     
     return p;
@@ -72,25 +79,32 @@ bufferWriter = function() {
     }
 
     w.writeInt = function(val) {
-        var bytes = [];
         var i = 4;
         do {
             insert(val & (255));
             val = val>>8;
             --i
         } while ( i )
-        return bytes;
     }
     
     w.writeShort = function(val) {
-        var bytes = [];
         var i = 2;
         do {
             insert(val & (255));
             val = val>>8;
             --i
         } while ( i )
-        return bytes;
+    }
+
+    w.writeFloat = function(val) {
+        buf = Buffer.allocUnsafe(4);
+        buf.writeFloatBE(val, 0);
+        buf.reverse();
+        
+        var arrByte = Uint8Array.from(buf);
+        arrByte.forEach((val) => {
+            insert(val);
+        });
     }
 
     w.writeString = function(val) {

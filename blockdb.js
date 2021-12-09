@@ -15,7 +15,7 @@ let createdBlocks = {};
 
 blockdb.createBlock = function(id, name, texFront, texBack, texLeft, texRight, texTop, texBottom) {
     if(!createdBlocks[id]) {
-        console.info(`Creating block ${id} / ${name}`);
+        //console.info(`Creating block ${id} / ${name}`);
         let block = {};
         block.id = id;
         block.type = blockdb["block"];
@@ -49,7 +49,7 @@ blockdb.createBlock = function(id, name, texFront, texBack, texLeft, texRight, t
 
 blockdb.createBlockMacro = function(id, name, texture) {
     if(!createdBlocks[id]) {
-        console.info(`Creating block ${id} / ${name}`);
+        //console.info(`Creating block ${id} / ${name}`);
         let block = {};
         block.id = id;
         block.type = blockdb["blockMacro"];
@@ -141,7 +141,7 @@ blockdb.createTransparentBlockMacro = function(id, name, texture) {
 
 blockdb.createPlant = function(id, name, texture) {
     if(!createdBlocks[id]) {
-        console.info(`Creating block ${id} / ${name}`);
+        //console.info(`Creating block ${id} / ${name}`);
         let block = {};
         block.id = id;
         block.type = blockdb["plant"];

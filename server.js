@@ -6,11 +6,8 @@ try {
    var wss;
 
    var reply2 = function(ws, id, data) {
-      ws.send(JSON.stringify({id:id, md:JSON.stringify(data)}));
+      //ws.send(JSON.stringify({id:id, md:JSON.stringify(data)}));
    }
-
-
-
 
    authenticatedUserSockets = [];
    let playerdatabase = {};
@@ -33,18 +30,20 @@ try {
    }
 
    //Sends packets to everyone, except its sender
-   _server.broadcastPacketFromSender = function(wsSender, packetname, data) {
+   _server.broadcastBufferFromSender = function(wsSender, data) {
       authenticatedUserSockets.forEach(_ws => {
          if(_ws!=wsSender) {
-            reply( _ws, packetname, data );
+            _ws.send(data.getData());
+            //reply( _ws, packetname, data );
          }
       });
    }
 
    //Sends packets to everyone
-   _server.broadcastPacket = function(packetname, data) {
+   _server.broadcastBufferPacket = function(data) {
       authenticatedUserSockets.forEach(_ws => {
-         reply( _ws, packetname, data );
+         _ws.send(data.getData());
+         //reply( _ws, packetname, data );
       });
    }
 
@@ -68,6 +67,7 @@ try {
          userdata.authenticated = false;
          userdata.saveddata = {};
          userdata.id = ++lastid;
+         userdata.ws = ws
          let hasSentInitialHash = false;
          let hasReceivedBlockData = false;
          playerdatabase[userdata.id] = userdata;
@@ -452,22 +452,37 @@ try {
                                     let otherPlayerWriter = bufferWriter();
                                     otherPlayerWriter.writeInt(messageids.client.OtherPlayerLogedIn);
                                     otherPlayerWriter.writeString(value.username);
-                                    otherPlayerWriter.writeInt(value.x);
-                                    otherPlayerWriter.writeInt(value.y);
-                                    otherPlayerWriter.writeInt(value.z);
+                                    otherPlayerWriter.WriteFloat(value.x);
+                                    otherPlayerWriter.WriteFloat(value.y);
+                                    otherPlayerWriter.WriteFloat(value.z);
                                     otherPlayerWriter.writeInt(value.id);
                                     ws.send(otherPlayerWriter.getData());
 
                                  }
                               }
-         
-                              _server.broadcastPacketFromSender(ws, "OtherPlayerLogedIn", {
-                                 name: userdata.username,
-                                 x: pos.x,
-                                 y: pos.y,
-                                 z: pos.z,
-                                 id: userdata.id
+
+                              //Here we are telling everyone else that we have logged in
+                              //This is our data
+                              let otherPlayerWriter = bufferWriter();
+                              otherPlayerWriter.writeInt(messageids.client.OtherPlayerLogedIn);
+                              otherPlayerWriter.writeString(value.username);
+                              otherPlayerWriter.WriteFloat(value.x);
+                              otherPlayerWriter.WriteFloat(value.y);
+                              otherPlayerWriter.WriteFloat(value.z);
+                              otherPlayerWriter.writeInt(value.id);
+                              authenticatedUserSockets.forEach(_ws => {
+                                 if(_ws!=wsSender) {
+                                    /*_server.broadcastPacketFromSender(ws, "OtherPlayerLogedIn", {
+                                       name: userdata.username,
+                                       x: pos.x,
+                                       y: pos.y,
+                                       z: pos.z,
+                                       id: userdata.id
+                                    });*/
+                                    _ws.send(otherPlayerWriter.getData());
+                                 }
                               });
+                              
                               
                               Events.fire("onPlayerLogin", userdata.username, ws);
                            break;
@@ -506,6 +521,26 @@ try {
                                  chunk:ch.network
                               });
                               */
+                             
+                           case messageids.server.UpdatePlayerPosition:
+
+                              //Updating our local user position values
+                              userdata.x = p.readFloat();
+                              userdata.y = p.readFloat();
+                              userdata.z = p.readFloat();
+
+                              //Writing Broadcasting our position values to everyone else
+                              let updatePosWriter = bufferWriter();
+                              updatePosWriter.writeInt(messageids.client.OtherPlayerMove);
+                              
+                              updatePosWriter.writeInt(userdata.id);
+                              updatePosWriter.writeFloat(userdata.x);
+                              updatePosWriter.writeFloat(userdata.y);
+                              updatePosWriter.writeFloat(userdata.z);
+                              //ws.send(updatePosWriter.getData());
+
+                              _server.broadcastBufferFromSender(ws, playerWriter.getData());
+                           break;
 
                            default:
                               console.log("UNHANDLED MESSAGE ID: " + msgid);
@@ -531,9 +566,15 @@ try {
             console.log(userdata.username + " has logged out");
             Events.fire("onPlayerLogout", userdata.username, ws);
             _server.broadcastMessage(userdata.username + " has logged out");
-            _server.broadcastPacket("OtherPlayerLogout", {
-               id: userdata.id
-            });
+
+            let index = authenticatedUserSockets.indexOf(ws);
+            authenticatedUserSockets.splice(index,1);
+            
+            let otherPlayerWriter = bufferWriter();
+            otherPlayerWriter.writeInt(messageids.client.OtherPlayerLogout);
+            otherPlayerWriter.writeString(userdata.id);
+            _server.broadcastBufferPacket(otherPlayerWriter);
+
 
             playerdatabase[userdata.id] = null;
             delete playerdatabase[userdata.id];
@@ -543,9 +584,15 @@ try {
             console.log(userdata.username + " has logged out");
             Events.fire("onPlayerLogout", userdata.username, ws);
             _server.broadcastMessage(userdata.username + " has logged out");
-            _server.broadcastPacket("OtherPlayerLogout", {
-               id: userdata.id
-            });
+            
+            let index = authenticatedUserSockets.indexOf(ws);
+            authenticatedUserSockets.splice(index,1);
+            
+            
+            let otherPlayerWriter = bufferWriter();
+            otherPlayerWriter.writeInt(messageids.client.OtherPlayerLogout);
+            otherPlayerWriter.writeString(userdata.id);
+            _server.broadcastBufferPacket(otherPlayerWriter);
 
             playerdatabase[userdata.id] = null;
             delete playerdatabase[userdata.id];

@@ -9,12 +9,13 @@ mkdir("./Data/client/");
 //Requiring all the networking libraries
 require("./Libs/networking/index.js");
 
+let testWriter = bufferWriter()
+testWriter.writeFloat(1.032);
 
-let val = 10;
-let writer = bufferWriter();
-(writer.writeInt(val));
-console.log(writer.getData())
-console.log("Done")
+let testReader = bufferReader(testWriter.getData());
+console.log(`Val: ${testReader.readFloat()}`);
+
+console.log("Done");
 
 
 
@@ -26,6 +27,10 @@ assetstreamer = require("./assetstreamer.js");
 
 //Here we are handling loading new mods
 modloader = require("./modloader.js");
+
+
+//This handles delivering all the textures to the client
+require("./content_server.js");
 
 
 //require("./engine/init.js");
@@ -45,4 +50,3 @@ function WaitToLoad() {
 }
 
 setTimeout(WaitToLoad, 1000);
-

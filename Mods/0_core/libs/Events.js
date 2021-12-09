@@ -38,13 +38,13 @@ try {
         evt.data = evtData;
 
         evtStorage[eventName] = evt;
-        console.log(`evtStorage["${eventName}"] = ${evtStorage[eventName]}`);
+        //console.log(`evtStorage["${eventName}"] = ${evtStorage[eventName]}`);
     }
 
     //Triggers an event
     events.fire = function(eventName, ...args) {
         try {
-            console.log("evtStorage[eventName]: " + evtStorage[eventName]);
+            //console.log("evtStorage[eventName]: " + evtStorage[eventName]);
             evtStorage[eventName].fire(...args);
         }catch(e) {
             console.error("EVENT ERR: " + eventName);

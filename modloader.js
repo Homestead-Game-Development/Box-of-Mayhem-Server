@@ -37,7 +37,7 @@ moddirs.forEach((dirname) => {
     if(fs.existsSync(modinfo) && fs.existsSync(indexjs)) {
         //Loading the mod folder
         let modinfofile = require(modinfo);
-        console.log(`Retreiving modinfo.js for ${dirname} / ${modinfofile.name}`);
+        //console.log(`Retreiving modinfo.js for ${dirname} / ${modinfofile.name}`);
         modstoload[modstoload.length] = modinfofile;
         mods[mods.length] = modinfofile;
         modinfofile.dir = moddir;
@@ -80,7 +80,7 @@ while(true) {
                     newmodsloaded[modinfo.name] = modinfo;//Updating our newly constructed list
                     let index = modstoload.indexOf(modinfo);//Gathering the index
                     modstoload.splice(index, 1);//Removing the index
-                    console.log("Adding " + modinfo.name + " - " + modinfo.dir);
+                    //console.log("Adding " + modinfo.name + " - " + modinfo.dir);
                 }else{
                     //console.log("Unable to add " + modinfo.name);
                 }
@@ -115,7 +115,7 @@ console.log("Initializing mods")
 //Entry point for loading the mods
 for(let index in neworder) {
     let modinfo = neworder[index];
-    console.log("Loading mod: " + modinfo.name);
+    //console.log("Loading mod: " + modinfo.name);
     try {
         if(!modloader.mods[modinfo.name]) {
             let moddata = require(modinfo.dir + "");

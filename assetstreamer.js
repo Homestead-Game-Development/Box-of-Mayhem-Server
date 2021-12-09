@@ -70,6 +70,7 @@ assetstreamer.network_images_size = 0;
 assetstreamer.network_hashes = [];
 assetstreamer.initial_message = {};
 assetstreamer.textureids = {};
+assetstreamer.textureinames = [];
 assetstreamer.finished = false; // If we finished loading
 
 //Our hashing engine
@@ -129,7 +130,7 @@ handleTable = function(hash, relitivedir) {
             console.warn("TEXTURE NAME CONFLICT: " + img.name + "\n[New]\n" + img.image_path + "\nConflicting with:\n[Old]\n" + assetstreamer.files[img.name].image_path + "\nOverwriting with the new version");
             assetstreamer.network_images_size -= assetstreamer.files[img.name].size
         }else{
-            console.log("Loading image: " + img.name);
+            //console.log("Loading image: " + img.name);
             //console.log(imginarydata);
         }
 
@@ -156,7 +157,8 @@ handleTable = function(hash, relitivedir) {
         img.network_hash.hash = img.hash;
 
         assetstreamer.textureids[img.name] = assetstreamer.network_hashes.length; // This adds the texture id to it
-        assetstreamer.network_hashes[assetstreamer.network_hashes.length] = img.network_hash;
+        assetstreamer.textureinames[assetstreamer.textureinames.length] = img.name; // Setting the asset streamer name
+        assetstreamer.network_hashes[assetstreamer.network_hashes.length] = img.network_hash;;
         //console.log("Image data size: " + JSON.stringify(img.network_image).length);
 
         //console.log(JSON.stringify(img));
