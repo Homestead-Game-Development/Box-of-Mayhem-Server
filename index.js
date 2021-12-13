@@ -8,17 +8,6 @@ mkdir("./Data/client/");
 
 //Requiring all the networking libraries
 require("./Libs/networking/index.js");
-
-let testWriter = bufferWriter()
-testWriter.writeFloat(1.032);
-
-let testReader = bufferReader(testWriter.getData());
-console.log(`Val: ${testReader.readFloat()}`);
-
-console.log("Done");
-
-
-
 blockdb = require("./blockdb.js");
 
 //This is for handling streaming assets to the clients once they join
@@ -48,5 +37,7 @@ function WaitToLoad() {
         server();
     }
 }
+
+
 
 setTimeout(WaitToLoad, 1000);
