@@ -74,6 +74,12 @@ bufferWriter = function() {
     
     let insert = function(val) {data[data.length] = val}
 
+    w.writeBytes = function(valArr) {
+        for(let index = 0; index < valArr.length; index++) {
+            w.writeByte(valArr[index]);
+        }
+    }
+
     w.writeByte = function(val) {
         insert(val);
     }

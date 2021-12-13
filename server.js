@@ -406,16 +406,12 @@ try {
                               breakBlockWriter.writeFloat(y);
                               breakBlockWriter.writeFloat(z);
                               _server.broadcastBufferPacket(breakBlockWriter.getData());
-                              //_server.broadcastPacket("PlayerBreakBlock", {x:d.x, y:d.y, z:d.z});
-                              /*
-                              worldengine.worlds.overworld.SetBlock(Math.floor(d.x), Math.floor(d.z), Math.floor(d.y),-1);
-                              worldengine.worlds.overworld.UpdateChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16))
-                              .then(function() {
-                                 console.log("Sending chunk update");
-                                 reply(ws, "RequestChunk", {
-                                    chunk:worldengine.GetChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16)).network
-                                 });
-                              })*/
+                           break;
+
+                           
+                           case messageids.server.RequestScriptData:
+                              
+                              _server.broadcastBufferPacket(ClientCache.writer.getData());
                            break;
 
                            default:
@@ -490,8 +486,15 @@ try {
          console.log(`listening on ${port}`)
       })
    }
+
+   Events.register("onServerStart", function() {
+      console.log("Registering the server update loop");
+      setInterval(function() {
+         //console.log("Server update loop")
+         Events.fire("onServerUpdate");
+      }, 1/20);
+   })
+
 }catch(e) {
    console.error(e);
 }
-
-bufferWriter();

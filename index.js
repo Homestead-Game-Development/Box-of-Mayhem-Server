@@ -17,6 +17,8 @@ assetstreamer = require("./assetstreamer.js");
 //Here we are handling loading new mods
 modloader = require("./modloader.js");
 
+require('./Libs/ClientCache.js');
+
 
 //This handles delivering all the textures to the client
 require("./content_server.js");
@@ -32,7 +34,9 @@ function WaitToLoad() {
         setTimeout(WaitToLoad, 1000);
     }else{
         console.log("Server is starting");
+        Events.fire("onServerStartPre");
         Events.fire("onServerStart");
+        Events.fire("onServerStartPost");
 
         server();
     }
