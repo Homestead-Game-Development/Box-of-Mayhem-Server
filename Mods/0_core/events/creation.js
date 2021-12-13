@@ -1,7 +1,7 @@
 
 events.createEvent("onServerStart");
-events.createEvent("onServerStop");
-events.createEvent("onServerUpdate");
+events.createEvent("onServerStop"); // TODO: NOT YET IMPLEMENTED
+events.createEvent("onServerUpdate"); // TODO: NOT YET IMPLEMENTED
 
 
 events.createEvent("onPlayerLogin");

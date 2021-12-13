@@ -5,10 +5,6 @@ try {
    var port = 20002;
    var wss;
 
-   var reply2 = function(ws, id, data) {
-      //ws.send(JSON.stringify({id:id, md:JSON.stringify(data)}));
-   }
-
    authenticatedUserSockets = [];
    let playerdatabase = {};
    let lastid = 0;
@@ -16,13 +12,15 @@ try {
 
    //Broadcasts a chat message
    _server.broadcastMessage = function(msg) {
+      console.log("Creating buffer message");
+      let writer = bufferWriter();
+      writer.writeInt      (messageids.client.Chat);
+      writer.writeString   (msg);
+
       authenticatedUserSockets.forEach(_ws => {
          try {
-            
-            //let writer = bufferWriter();
-            writer.writeInt      (messageids.client.Chat);
-            writer.writeString   (msg);
-            ws.send(writer.getData());
+            console.log("Sending to ws: " + _ws);
+            _ws.send(writer.getData());
          }catch(e) {
 
          }
@@ -33,7 +31,7 @@ try {
    _server.broadcastBufferFromSender = function(wsSender, data) {
       authenticatedUserSockets.forEach(_ws => {
          if(_ws!=wsSender) {
-            _ws.send(data.getData());
+            _ws.send(data);
             //reply( _ws, packetname, data );
          }
       });
@@ -42,7 +40,11 @@ try {
    //Sends packets to everyone
    _server.broadcastBufferPacket = function(data) {
       authenticatedUserSockets.forEach(_ws => {
-         _ws.send(data.getData());
+         try {
+            _ws.send(data);
+         }catch(e) {
+            console.error(e);
+         }
          //reply( _ws, packetname, data );
       });
    }
@@ -78,202 +80,18 @@ try {
                   /*try { 
                      let d = (JSON.parse(data));
                      switch(d.state) {
-                        case messageids.creds:
-                           let key = d.skey;
-                           console.log("Authenticating key: " + key);
-                           //TODO: Authenticate the session key, and get the username associated with it
       
-                           // will be executed asynchronously
-                           http.get(`http://community.homesteadgamedevelopment.com:20001/`+encodeURIComponent(`{"action":"get","key":"${key}"}`), (response) => {
-                              let chunks_of_data = [];
-      
-                              response.on('data', (fragments) => {
-                                 chunks_of_data.push(fragments);
-                              });
-                              
-                              response.on('end', () => {
-                                 let response_body = Buffer.concat(chunks_of_data);
-                                 // response body
-                                 let response_message = response_body.toString();
-      
-                                 try {
-                                    let response = JSON.parse(response_message);
-                                    if(response.success) {
-                                       //It has passed!
-                                       userdata.authenticated = true;
-                                       userdata.username = response.username;
-                                       console.log("Authenticated user")
-                                       console.log("Username: " + response.username);
-                                       authenticatedUserSockets.push(ws);
-                                       reply(ws, "AcceptedSessionKey", {playerInventory:"",playerStats:"",playerName:""});
-                                    }else{
-                                       //It has failed
-                                       reply(ws, "FailedSessionKey", {});
-                                    }
-                                 }catch(e) {
-                                    console.error(e);
-                                 }
-                              });
-      
-                              response.on('error', (error) => {
-                                 console.log(error);
-                              });
-                           });
-                        break;
-      
-                        case messageids.chat:
-                           if(userdata.authenticated) {
-                              
-                              Events.fire("onPlayerChat", userdata.username, d.msg);
-                              if(Events.storage["onPlayerChat"].data["sendMessage"]) {
-                                 _server.broadcastMessage(Events.storage["onPlayerChat"].data["message"]);
-                              }
-                           }
-                        break;
-      
-                        case messageids.RequestChunk:
-                           let ch = worldengine.GetChunk(d.x, d.y, d.z)//chunk.blocks
-      
-                           reply(ws, "RequestChunk", {
-                              chunk:ch.network
-                           });
-      
-                        case messageids.RequestInitialTextureHash:
-                           if(hasSentInitialHash==false) {
-                              console.log("Sending initial texture hash to " + userdata.username);
-                              reply(
-                                 ws, "ReceiveInitialHash", assetstreamer.initial_message
-                              );
-                              hasSentInitialHash = true;
-                           }
-                        break;
-      
-                        case messageids.RequestHashList:
-                           console.log("Sending hash list to " + userdata.username + " / " + JSON.stringify(assetstreamer.network_hashes).length);
-                           reply(
-                              ws, "ReceiveHashList", {"hash_list":(assetstreamer.network_hashes)}
-                           );
-                        break;
-      
-                        case messageids.RequestCacheFile:
-                           
-                           let hashedImageFromIndex = assetstreamer.network_hashes[d.i];
-                           let imgname = hashedImageFromIndex.name;
-                           let img = assetstreamer.network_images[imgname];
-                           console.log("Sending " + imgname + " to " + userdata.username);
-      
-                           reply(ws, "ReceiveCacheImage", {img:img});
-                        break;
-      
-                        case messageids.RequestBlockData:
-                           if(hasReceivedBlockData==false) {//Quick debounce
-                              hasReceivedBlockData = true;
-                              //console.log(blockdb.data);
-                              //console.log(JSON.toString(blockdb.data));
-                              reply(ws, "ReceiveBlockData", blockdb.data);
-                           }
-                        break;
-      
-                        case messageids.PlayerPlaceBlock:
-                           //_server.broadcastPacket("PlayerPlaceBlock", {x:d.x, y:d.y, z:d.z, id:d.id});
-                           
-                           
-                           worldengine.worlds.overworld.SetBlock(Math.floor(d.x), Math.floor(d.z), Math.floor(d.y),d.id);
-                           worldengine.worlds.overworld.UpdateChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16))
-                           worldengine.worlds.overworld.SaveChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16))
-                           _server.broadcastPacket("PlayerPlaceBlock", {x:d.x, y:d.y, z:d.z, id:d.id});
-                           /*_server.broadcastPacket("RequestChunk", {
-                              chunk:worldengine.GetChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16)).network
-                           });*//*
-                        break;
-      
-                        case messageids.PlayerBreakBlock:
-      
-                           worldengine.worlds.overworld.SetBlock(Math.floor(d.x), Math.floor(d.z), Math.floor(d.y),-1);
-                           worldengine.worlds.overworld.UpdateChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16))
-                           worldengine.worlds.overworld.SaveChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16))
-                           _server.broadcastPacket("PlayerBreakBlock", {x:d.x, y:d.y, z:d.z});
-                           /*
-                           worldengine.worlds.overworld.SetBlock(Math.floor(d.x), Math.floor(d.z), Math.floor(d.y),-1);
-                           worldengine.worlds.overworld.UpdateChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16))
-                           .then(function() {
-                              console.log("Sending chunk update");
-                              reply(ws, "RequestChunk", {
-                                 chunk:worldengine.GetChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16)).network
-                              });
-                           })*//*
-                        break;
-      
-                        case messageids.LogInWorld:
-                           _server.broadcastMessage(userdata.username + " has logged in.");
-      
-                           let pos = {
-                              x: 0,
-                              y: 200,
-                              z: 0
-                           }
-                           userdata.x = pos.x;
-                           userdata.y = pos.y;
-                           userdata.z = pos.z;
-      
-                           reply(
-                              ws, "LogInWorld", {
-                                 world:"overworld",
-                                 x:pos.x,
-                                 y:pos.y,
-                                 z:pos.z,
-                                 chunks:[
-                                    //simulateChunk(-1, -1, 0),
-                                 ]
-                              }
-                           );
-                           
-                           //Sending the player the
-                           for(const[key, value] of Object.entries(playerdatabase)) {
-                              if(value.id != userdata.id) {//Ignore ourself
-                                 reply(
-                                    ws, "OtherPlayerLogedIn",
-                                    {
-                                       name: value.username,
-                                       x: value.x,
-                                       y: value.y,
-                                       z: value.z,
-                                       id: value.id
-                                    }
-                                 );
-                              }
-                           }
-      
-                           _server.broadcastPacketFromSender(ws, "OtherPlayerLogedIn", {
-                              name: userdata.username,
-                              x: pos.x,
-                              y: pos.y,
-                              z: pos.z,
-                              id: userdata.id
-                           });
-                           
-                           Events.fire("onPlayerLogin", userdata.username, ws);
-                        break;
-      
-                        case messageids.UpdatePlayerPosition:
-                           _server.broadcastPacketFromSender(ws, "OtherPlayerMove", {
-                              x: d.x,
-                              y: d.y,
-                              z: d.z,
-                              id: userdata.id
-                           });
-                           userdata.x = d.x;
-                           userdata.y = d.y;
-                           userdata.z = d.z;
-                        break;
-      
+                        
                         default:
                            console.log(`Unhandled state: ${d.state}`);
                         break;
                      //}
                   //}catch(e) {*/
                      try {
-
+                        let x=0
+                        let y=0;
+                        let z=0;
+                        let id=0;
                         let binary = [];
                         for(let index=0; index<data.length; index++) {
                            binary[index] = data[index];
@@ -282,7 +100,7 @@ try {
 
                         let p = bufferReader(binary);
                         let msgid = p.readUShort();
-                        console.log("Handling message: " + msgid);
+                        //console.log("Handling message: " + msgid);
                         let writer = bufferWriter();
 
                         switch(msgid) {
@@ -438,12 +256,12 @@ try {
                               userdata.y = pos.y;
                               userdata.z = pos.z;
                               
-                              let playerWriter = bufferWriter();
-                              playerWriter.writeInt(messageids.client.LogInWorld);
-                              playerWriter.writeInt(pos.x);
-                              playerWriter.writeInt(pos.y);
-                              playerWriter.writeInt(pos.z);
-                              ws.send(playerWriter.getData());
+                              let loggedInWorldWriter = bufferWriter();
+                              loggedInWorldWriter.writeInt(messageids.client.LogInWorld);
+                              loggedInWorldWriter.writeInt(pos.x);
+                              loggedInWorldWriter.writeInt(pos.y);
+                              loggedInWorldWriter.writeInt(pos.z);
+                              ws.send(loggedInWorldWriter.getData());
                               
                               //Sending the player the
                               for(const[key, value] of Object.entries(playerdatabase)) {
@@ -452,9 +270,9 @@ try {
                                     let otherPlayerWriter = bufferWriter();
                                     otherPlayerWriter.writeInt(messageids.client.OtherPlayerLogedIn);
                                     otherPlayerWriter.writeString(value.username);
-                                    otherPlayerWriter.WriteFloat(value.x);
-                                    otherPlayerWriter.WriteFloat(value.y);
-                                    otherPlayerWriter.WriteFloat(value.z);
+                                    otherPlayerWriter.writeFloat(value.x);
+                                    otherPlayerWriter.writeFloat(value.y);
+                                    otherPlayerWriter.writeFloat(value.z);
                                     otherPlayerWriter.writeInt(value.id);
                                     ws.send(otherPlayerWriter.getData());
 
@@ -465,20 +283,13 @@ try {
                               //This is our data
                               let otherPlayerWriter = bufferWriter();
                               otherPlayerWriter.writeInt(messageids.client.OtherPlayerLogedIn);
-                              otherPlayerWriter.writeString(value.username);
-                              otherPlayerWriter.WriteFloat(value.x);
-                              otherPlayerWriter.WriteFloat(value.y);
-                              otherPlayerWriter.WriteFloat(value.z);
-                              otherPlayerWriter.writeInt(value.id);
+                              otherPlayerWriter.writeString(userdata.username);
+                              otherPlayerWriter.writeFloat(pos.x);
+                              otherPlayerWriter.writeFloat(pos.y);
+                              otherPlayerWriter.writeFloat(pos.z);
+                              otherPlayerWriter.writeInt(userdata.id);
                               authenticatedUserSockets.forEach(_ws => {
-                                 if(_ws!=wsSender) {
-                                    /*_server.broadcastPacketFromSender(ws, "OtherPlayerLogedIn", {
-                                       name: userdata.username,
-                                       x: pos.x,
-                                       y: pos.y,
-                                       z: pos.z,
-                                       id: userdata.id
-                                    });*/
+                                 if(_ws!=ws) {
                                     _ws.send(otherPlayerWriter.getData());
                                  }
                               });
@@ -516,12 +327,7 @@ try {
                               */
 
                               ws.send(writer.getData());
-                              /*
-                              reply(ws, "RequestChunk", {
-                                 chunk:ch.network
-                              });
-                              */
-                             
+
                            case messageids.server.UpdatePlayerPosition:
 
                               //Updating our local user position values
@@ -539,7 +345,76 @@ try {
                               updatePosWriter.writeFloat(userdata.z);
                               //ws.send(updatePosWriter.getData());
 
-                              _server.broadcastBufferFromSender(ws, playerWriter.getData());
+                              _server.broadcastBufferFromSender(ws, updatePosWriter.getData());
+                           break;
+
+                           case messageids.server.Chat:
+                              if(userdata.authenticated) {
+
+                                 let txtmsg = p.readString();
+                                 console.log()
+                                 
+                                 Events.fire("onPlayerChat", userdata.username, txtmsg);
+
+                                 if(Events.storage["onPlayerChat"].data["sendMessage"]) {
+                                    console.log("Broadcasting to player");
+                                    _server.broadcastMessage(Events.storage["onPlayerChat"].data["message"]);
+                                 }
+                              }
+                           break;
+                           
+                           case messageids.server.PlayerPlaceBlock:
+                              //_server.broadcastPacket("PlayerPlaceBlock", {x:d.x, y:d.y, z:d.z, id:d.id});
+                              
+                              x = p.readFloat();
+                              y = p.readFloat();
+                              z = p.readFloat();
+                              id = p.readInt();
+                              
+                              worldengine.worlds.overworld.SetBlock(Math.floor(x), Math.floor(z), Math.floor(y),id);
+                              worldengine.worlds.overworld.UpdateChunk(Math.floor(x/16),Math.floor(z/16),Math.floor(y/16))
+                              worldengine.worlds.overworld.SaveChunk(Math.floor(x/16),Math.floor(z/16),Math.floor(y/16))
+                              
+                              let placeBlockWriter = bufferWriter();
+                              placeBlockWriter.writeInt(messageids.client.PlayerPlaceBlock);
+                              placeBlockWriter.writeFloat(x);
+                              placeBlockWriter.writeFloat(y);
+                              placeBlockWriter.writeFloat(z);
+                              placeBlockWriter.writeInt(id);
+                              _server.broadcastBufferPacket(placeBlockWriter.getData());
+                              //_server.broadcastPacket("PlayerPlaceBlock", {x:d.x, y:d.y, z:d.z, id:d.id});
+                              /*_server.broadcastPacket("RequestChunk", {
+                                 chunk:worldengine.GetChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16)).network
+                              });*/
+                           break;
+
+                           
+                           case messageids.server.PlayerBreakBlock:
+                              x = p.readFloat();
+                              y = p.readFloat();
+                              z = p.readFloat();
+         
+                              worldengine.worlds.overworld.SetBlock(Math.floor(x), Math.floor(z), Math.floor(y),-1);
+                              worldengine.worlds.overworld.UpdateChunk(Math.floor(x/16),Math.floor(z/16),Math.floor(y/16));
+                              worldengine.worlds.overworld.SaveChunk(Math.floor(x/16),Math.floor(z/16),Math.floor(y/16));
+
+
+                              let breakBlockWriter = bufferWriter();
+                              breakBlockWriter.writeInt(messageids.client.PlayerBreakBlock);
+                              breakBlockWriter.writeFloat(x);
+                              breakBlockWriter.writeFloat(y);
+                              breakBlockWriter.writeFloat(z);
+                              _server.broadcastBufferPacket(breakBlockWriter.getData());
+                              //_server.broadcastPacket("PlayerBreakBlock", {x:d.x, y:d.y, z:d.z});
+                              /*
+                              worldengine.worlds.overworld.SetBlock(Math.floor(d.x), Math.floor(d.z), Math.floor(d.y),-1);
+                              worldengine.worlds.overworld.UpdateChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16))
+                              .then(function() {
+                                 console.log("Sending chunk update");
+                                 reply(ws, "RequestChunk", {
+                                    chunk:worldengine.GetChunk(Math.floor(d.x/16),Math.floor(d.z/16),Math.floor(d.y/16)).network
+                                 });
+                              })*/
                            break;
 
                            default:
@@ -573,7 +448,7 @@ try {
             let otherPlayerWriter = bufferWriter();
             otherPlayerWriter.writeInt(messageids.client.OtherPlayerLogout);
             otherPlayerWriter.writeString(userdata.id);
-            _server.broadcastBufferPacket(otherPlayerWriter);
+            _server.broadcastBufferPacket(otherPlayerWriter.getData());
 
 
             playerdatabase[userdata.id] = null;
@@ -592,7 +467,7 @@ try {
             let otherPlayerWriter = bufferWriter();
             otherPlayerWriter.writeInt(messageids.client.OtherPlayerLogout);
             otherPlayerWriter.writeString(userdata.id);
-            _server.broadcastBufferPacket(otherPlayerWriter);
+            _server.broadcastBufferPacket(otherPlayerWriter.getData());
 
             playerdatabase[userdata.id] = null;
             delete playerdatabase[userdata.id];

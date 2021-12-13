@@ -3,7 +3,7 @@
 messageids = {};
 messageids.server = {}
 messageids.server["creds"] = 0;
-messageids.server["chat"] = 1;
+messageids.server["Chat"] = 1;
 messageids.server["RequestChunk"] = 2;
 messageids.server["RequestInitialTextureHash"] = 3;
 messageids.server["RequestHashList"] = 4;
