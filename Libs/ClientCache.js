@@ -1,4 +1,5 @@
-let fs = require("fs")
+let fs = require("fs");
+var path = require("path");
 
 ClientCache = {}
 
@@ -11,8 +12,10 @@ let cachAddScriptLock = false;
 //This adds a script to the queue
 ClientCache.AddScript = function(filename) {
     if(cachAddScriptLock==false) {
+        
         if(fs.existsSync(filename)) {
             let scriptData = ""+fs.readFileSync(filename);
+            ClientCache.scriptCache.writeString(path.relative(process.cwd(),filename));
             ClientCache.scriptCache.writeString(scriptData);
             ClientCache.scriptCacheCount++;
 
@@ -36,4 +39,5 @@ Events.register("onServerStartPost", function(eventData) {
     ClientCache.writer.writeInt(ClientCache.scriptCacheCount);
     ClientCache.writer.writeBytes(ClientCache.scriptCache.getData())
 
+    return false;
 });

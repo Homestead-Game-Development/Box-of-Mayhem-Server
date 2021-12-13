@@ -16,3 +16,9 @@ console.log(`onPlayerLogin? ${events.storage["onPlayerLogin"]}`);
 
 
 module.export = mymod
+
+
+Events.register("onServerStart", function() {
+    console.log("Registering CORE client api reference");
+    ClientCache.AddScript(__dirname+"/client/client.js");
+})
