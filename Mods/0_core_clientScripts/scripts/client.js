@@ -41,7 +41,7 @@ let posX = 64;
 events.Register("onClientStart", function() {
     image = new GUI.Image();
     image.SetSize(128,128);
-    image.SetPosition(posX, -64);
+    image.SetPosition(64, 64);
     image.SetImage("nether_wart_stage_2.png");
 
     console.log("Path: " + __filepath);
@@ -50,11 +50,11 @@ events.Register("onClientStart", function() {
 
     imgButtonTest = new GUI.Button("wheatstage_3.png", "wheatstage_6.png", "wheatstage_1.png", function() {console.log("BUTTON CLICKED");});
     imgButtonTest.SetSize(128,128);
-    imgButtonTest.SetPosition(64, -256);
+    imgButtonTest.SetPosition(64, 256);
 
     txtGroupTest = new GUI.Text("Initial Text");
     txtGroupTest.SetSize(128,128);
-    txtGroupTest.SetPosition(64, -512);
+    txtGroupTest.SetPosition(64, 512);
     //txtGroupTest.SetText("What?");
 })
 
@@ -62,7 +62,7 @@ events.Register("onClientStart", function() {
 events.Register("onClientFixedUpdate", function() {
     posX = posX+1;
     posX = ((posX-64) % 64) + 64;
-    //image.SetPosition(posX, -64);
+
     image.SetImage(""+frames[Math.floor(animPlace % 11)]);
     
     animPlace = animPlace+0.1;
