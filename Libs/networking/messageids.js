@@ -14,6 +14,7 @@ messageids.server["PlayerBreakBlock"] = 8;
 messageids.server["LogInWorld"] = 9;
 messageids.server["UpdatePlayerPosition"] = 10;
 messageids.server["RequestScriptData"] = 11;
+messageids.server["ScriptData"] = 20;
 
 messageids.client = {};
 messageids.client["Init"] = 0;
@@ -32,3 +33,4 @@ messageids.client["ReceiveHashList"] = 12;
 messageids.client["ReceiveCacheImage"] = 13;
 messageids.client["ReceiveBlockData"] = 14;
 messageids.client["ReceiveClientScripts"] = 15;
+messageids.client["ScriptData"] = 20;

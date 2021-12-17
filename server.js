@@ -8,6 +8,7 @@ try {
 
    authenticatedUserSockets = [];
    let playerdatabase = {};
+   let nametoplayer = {};
    let lastid = 0;
    let _server = {};
 
@@ -133,6 +134,7 @@ try {
                                           userdata.username = response.username;
                                           console.log("Authenticated user")
                                           console.log("Username: " + response.username);
+                                          nametoplayer[response.username] = userdata;
                                           authenticatedUserSockets.push(ws);
 
                                           writer.writeInt(messageids.client.AcceptedSessionKey);
@@ -414,6 +416,15 @@ try {
                               _server.broadcastBufferPacket(ClientCache.writer.getData());
                            break;
 
+                           
+                           case messageids.server.ScriptData:
+                              let messageID = p.readInt();
+                              let messageSize = p.readInt();
+                              let messageData = p.readBytesRaw(messageSize);
+
+                              Net.Fire(messageID, messageData, ws);
+                           break;
+
                            default:
                               console.log("UNHANDLED MESSAGE ID: " + msgid);
                         }
@@ -449,6 +460,7 @@ try {
 
 
             playerdatabase[userdata.id] = null;
+            delete nametoplayer[response.username];
             delete playerdatabase[userdata.id];
          }
 
@@ -467,6 +479,7 @@ try {
             _server.broadcastBufferPacket(otherPlayerWriter.getData());
 
             playerdatabase[userdata.id] = null;
+            delete nametoplayer[response.username];
             delete playerdatabase[userdata.id];
          }
          

@@ -1,13 +1,19 @@
 bufferReader = function(data) {
     let p = {};
 
+    
+    //Returns all the data
+    p.getData = function() {
+        return data;
+    }
+
     //Returns: Byte
     p.readByte = function() {
         return data.shift();
     }
 
     //Returns the amount of bytes from the buffer
-    p.readBytes = function(amount) {
+    p.readBytesRaw = function(amount) {
         let data = [];
         for(let i = 0; i < amount; i++) {
             data[i] = p.readByte();
@@ -17,7 +23,7 @@ bufferReader = function(data) {
 
     //Return: 32-Bit Integer
     p.readInt = function() {
-        let bytedata = p.readBytes(4);
+        let bytedata = p.readBytesRaw(4);
         //console.log(bytedata);
         bytedata.reverse();
         return Buffer.from(bytedata).readInt32BE();
@@ -25,7 +31,7 @@ bufferReader = function(data) {
 
     //Return: Unsigned 32-Bit Integer
     p.readUInt = function() {
-        let bytedata = p.readBytes(4);
+        let bytedata = p.readBytesRaw(4);
         bytedata.reverse();
         return Buffer.from(bytedata).readUInt32BE();
     }
@@ -49,14 +55,14 @@ bufferReader = function(data) {
 
     //Returns: Unsigned 16-Bit Short
     p.readUShort = function() {
-        let bytedata = p.readBytes(2);
+        let bytedata = p.readBytesRaw(2);
         bytedata.reverse();
         return Buffer.from(bytedata).readUInt16BE();
     }
 
     //Returns: Float
     p.readFloat = function() {
-        let bytedata = p.readBytes(4);
+        let bytedata = p.readBytesRaw(4);
         bytedata.reverse();
         return Buffer.from(bytedata).readFloatBE();
     }

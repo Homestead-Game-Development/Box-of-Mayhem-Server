@@ -48,7 +48,19 @@ events.Register("onClientStart", function() {
 
 
 
-    imgButtonTest = new GUI.Button("wheatstage_3.png", "wheatstage_6.png", "wheatstage_1.png", function() {console.log("BUTTON CLICKED");});
+    imgButtonTest = new GUI.Button("wheatstage_3.png", "wheatstage_6.png", "wheatstage_1.png", function() {
+        console.log("BUTTON CLICKED");
+        try {
+            console.log("PRE SEND");
+            let data = BufferData.Create();
+            data.WriteString("Hello World");
+            Net.Send(100, data);
+
+        }catch(e) {
+            console.log(e);
+        }
+        console.log("POST SEND");
+    });
     imgButtonTest.SetSize(128,128);
     imgButtonTest.SetPosition(64, 256);
 
@@ -56,6 +68,12 @@ events.Register("onClientStart", function() {
     txtGroupTest.SetSize(128,128);
     txtGroupTest.SetPosition(64, 512);
     //txtGroupTest.SetText("What?");
+
+    console.log("Registering net listener 101")
+    Net.Register(101, function(data) {
+        console.log("The server has talked to me!");
+        console.log(data.ReadString());
+    });
 })
 
 
