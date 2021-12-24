@@ -1,7 +1,7 @@
 
 Events.register("onServerStart", function() {
     let data = ClientCache.AddScript(__dirname+"/scripts/client.js");
-    console.log(data);
+    //console.log(data);
     
     console.log("Registering net message 1");
     Net.Register(100, function(d, ws) {

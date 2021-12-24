@@ -127,14 +127,14 @@ try {
                                     console.log("Authentication message response message: " + response_message);
          
                                     try {
-                                       let response = JSON.parse(response_message);
-                                       if(response.success) {
+                                       let jsonMsg = JSON.parse(response_message);
+                                       if(jsonMsg.success) {
                                           //It has passed!
                                           userdata.authenticated = true;
-                                          userdata.username = response.username;
+                                          userdata.username = jsonMsg.username;
                                           console.log("Authenticated user")
-                                          console.log("Username: " + response.username);
-                                          nametoplayer[response.username] = userdata;
+                                          console.log("Username: " + jsonMsg.username);
+                                          nametoplayer[jsonMsg.username] = userdata;
                                           authenticatedUserSockets.push(ws);
 
                                           writer.writeInt(messageids.client.AcceptedSessionKey);
@@ -460,7 +460,7 @@ try {
 
 
             playerdatabase[userdata.id] = null;
-            delete nametoplayer[response.username];
+            delete nametoplayer[userdata.username];
             delete playerdatabase[userdata.id];
          }
 
@@ -479,7 +479,7 @@ try {
             _server.broadcastBufferPacket(otherPlayerWriter.getData());
 
             playerdatabase[userdata.id] = null;
-            delete nametoplayer[response.username];
+            delete nametoplayer[userdata.username];
             delete playerdatabase[userdata.id];
          }
          

@@ -39,12 +39,13 @@ let frames = [
 let posX = 64;
 
 events.Register("onClientStart", function() {
+    
     image = new GUI.Image();
     image.SetSize(128,128);
     image.SetPosition(64, 64);
     image.SetImage("nether_wart_stage_2.png");
 
-    console.log("Path: " + __filepath);
+    //console.log("Path: " + __filepath);
 
 
 
@@ -78,12 +79,15 @@ events.Register("onClientStart", function() {
 
 
 events.Register("onClientFixedUpdate", function() {
+    
     posX = posX+1;
     posX = ((posX-64) % 64) + 64;
 
     image.SetImage(""+frames[Math.floor(animPlace % 11)]);
     
     animPlace = animPlace+0.1;
+
+    image.SetPosition(Math.round(Mouse.x), Math.round(Mouse.y));
 });
 
 //ForcedError()

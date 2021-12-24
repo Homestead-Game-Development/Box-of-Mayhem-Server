@@ -24,7 +24,7 @@ Net.Fire = function(msgID, bufferData, ws) {
 
 //This registers new messages
 Net.Register = function(msgID, triggeredFunction) {
-    console.log("REGISTERING MESSAGE HANDLER: " + msgID + "\n" + triggeredFunction);
+    //console.log("REGISTERING MESSAGE HANDLER: " + msgID + "\n" + triggeredFunction);
     let arr = [];
     if(messages[msgID]==null) {
         messages[msgID] = arr;
