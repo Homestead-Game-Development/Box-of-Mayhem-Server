@@ -66,9 +66,6 @@ events.Register("onClientLateUpdate", function() {
         Net.Send(200, data);
         console.log("Middle: " + BlockPosition.ToString());
     }
-    /*
-    let playerpos = LocalPlayer.GetPosition();
-    txtPosition.SetText(`Pos: ${Math.floor(playerpos.x)}, ${Math.floor(playerpos.y)}, ${Math.floor(playerpos.z)}`)*/
 });
 
 Net.Register(201,function(reader) {

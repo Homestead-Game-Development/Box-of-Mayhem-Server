@@ -8,7 +8,7 @@ let console = {};
 console.log = function(msg) {
     let txt = new GUI.Text("<color=white>" + msg.toString() + "</color>");
     txt.SetParent(errorLogGroup);
-    txt.SetSize(512,24);
+    txt.SetSize(Screen.width,24);
     txt.SetLocalPosition(16, 8);
     msgs.forEach(function(inst) {
         let position = inst.GetLocalPosition()
@@ -22,7 +22,7 @@ console.log = function(msg) {
 console.error = function(msg) {
     let txt = new GUI.Text("<color=red>" + msg.toString() + "</color>");
     txt.SetParent(errorLogGroup);
-    txt.SetSize(512,24);
+    txt.SetSize(Screen.width,24);
     txt.SetLocalPosition(16, 8);
     msgs.forEach(function(inst) {
         let position = inst.GetLocalPosition()
@@ -36,7 +36,8 @@ console.error = function(msg) {
 let updateLayout = function() {
     let y = 0;
     msgs.forEach(function(inst) {
-        let position = inst.GetLocalPosition()
+        let position = inst.GetLocalPosition();
+        inst.SetSize(Screen.width,24);
         inst.SetLocalPosition(16, (position.z-(((Screen.height-128)/2))) + y + 16);
         y += 16;
     });
@@ -45,7 +46,7 @@ let updateLayout = function() {
 events.Register("onClientStart", function() {
     //This adds to the general GUI
     errorLogGroup = new GUI.Group();
-    errorLogGroup.SetSize(512,Screen.height-128);
+    errorLogGroup.SetSize(Screen.width,Screen.height-128);
     errorLogGroup.SetPosition(0, 128);
     errorLogGroup.SetActive(false);
 
@@ -53,13 +54,7 @@ events.Register("onClientStart", function() {
     guiBG.SetImage("logbg.png");
     guiBG.SetParent(errorLogGroup);
     guiBG.SetLocalPosition(0,0);
-    guiBG.SetSize(512,Screen.height-128);
-
-    button = new GUI.Button("GUI_Overlay_InventoryButtonUp.png", "GUI_Overlay_InventoryButtonUp.png", "GUI_Overlay_InventoryButtonDown.png", function() {
-
-    });
-    button.SetSize(64, 64);
-    button.SetPosition(Screen.width - 190, 24);
+    guiBG.SetSize(Screen.width,Screen.height-128);
 
     console.log("Initializing error log console");
 });
@@ -75,7 +70,7 @@ events.Register("onClientUpdate", function() {
 	}
 
     if(errorLogGroup.GetActive()) {
-        errorLogGroup.SetSize(512,Screen.height-128);
+        errorLogGroup.SetSize(Screen.width,Screen.height-128);
         let y = 0;
         msgs.forEach(function(inst) {
             let position = inst.GetLocalPosition()
@@ -98,7 +93,7 @@ events.Register("onJSError", function() {
 	}
 
     if(errorLogGroup.GetActive()) {
-        errorLogGroup.SetSize(512,Screen.height-128);
+        errorLogGroup.SetSize(Screen.width,Screen.height-128);
     }
     
 });
