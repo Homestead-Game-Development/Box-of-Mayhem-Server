@@ -3,6 +3,7 @@ let mymod = {}
 
 
 events.register("onServerStart", function() {
+
     //Creating blocks
     console.log("Creating core blocks");
     blockdb.createBlock                 (1,  "grass", "grass_side.block.block.png","grass_side.block.block.png","grass_side.block.block.png","grass_side.block.block.png","grass_top.block.block.png","dirt.block.block.png");

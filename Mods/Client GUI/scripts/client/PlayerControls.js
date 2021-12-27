@@ -7,6 +7,9 @@ events.Register("onClientUpdate", function() {
 	{
         Mouse.Lock(!Mouse.GetLocked());
 	}
+
+    let pos = LocalPlayer.GetPosition();
+    LocalPlayer.SetCameraPosition(pos.x, pos.y+0.5, pos.z);
     
     if(Mouse.GetLocked()) {
         camX += Mouse.GetHSpeed() * 3.8;
@@ -15,4 +18,10 @@ events.Register("onClientUpdate", function() {
         camY = (camY > 89) ? 89 : (camY < -89) ? -89 : camY;
         LocalPlayer.SetCameraRotation(camX, camY);
     }
+});
+
+
+events.Register("onClientStart", function() {
+    console.log(LocalPlayer.GetPosition());
+    //SomeUnhandledFunction();
 });
