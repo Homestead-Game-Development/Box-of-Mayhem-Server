@@ -1,3 +1,6 @@
+let w = 32+((64+8)*10);
+let offsetX = -(w/2);
+let offsetY = -40;
 
 events.Register("onClientStart", function() {
     //This adds to the general GUI
@@ -23,14 +26,11 @@ events.Register("onClientStart", function() {
     txt.SetPosition(0,0);
     txt.SetText("Number of textures: " + (LocalGame.GetBlockIDs().length));
 
-    w = 32+((64+8)*10);
 
     testHotbar = new GUI.Group();
     testHotbar.SetSize(w, 80);
     testHotbar.SetPosition((Screen.width/2)-(w/2), Screen.height-80);
 
-    let offsetX = -(w/2);
-    let offsetY = -40;
 
     let testHotbarBackground = new GUI.Image();
     testHotbarBackground.SetParent(testHotbar);
@@ -38,14 +38,33 @@ events.Register("onClientStart", function() {
     testHotbarBackground.SetLocalPosition(offsetX, offsetY);
     testHotbarBackground.SetColor(0,0,0,125);
 
+    selectedHotbarIndex = 0;
+    hotbar = {};
+
     for(let i = 0; i < 10; i++) {
         let testImage = new GUI.Image();
         testImage.SetSize(64,64);
         testImage.SetParent(testHotbar);
         testImage.SetLocalPosition(offsetX+16+(72*i),offsetY+8);
-        testImage.SetImage(LocalGame.GetTextureNameFromTextureID(i));
-        testImage.SetColor(125,125,125,255);
+        
+        hotbar[i] = {
+            img:testImage,
+            blockID:i+1
+        }
+        let block = LocalGame.GetBlockFromID(hotbar[i].blockID);
+
+        testImage.SetImage(LocalGame.GetTextureNameFromTextureID(block.blockTexture.front));
+        let col = (selectedHotbarIndex==i) ? 255 : 75;
+        testImage.SetColor(col,col,col,255);
     }
+
+
+    SlotSelector = GUI.Image();
+    SlotSelector.SetImage("SelectedSlotIcon.png");
+    SlotSelector.SetSize(64,64);
+    SlotSelector.SetPosition(-1000,-1000);
+    SlotSelector.SetParent(testHotbar);
+    SlotSelector.SetColor(255,125,125,255);
 /*
     let testImage = new GUI.Image();
     testImage.SetSize(64,64);
@@ -74,4 +93,37 @@ events.Register("onClientStart", function() {
 events.Register("onClientUpdate", function() {
     testHotbar.SetSize(w, 80);
     testHotbar.SetPosition((Screen.width/2)-(w/2), Screen.height-80);
+
+    if (Input.GetAxis("Mouse ScrollWheel") > 0 ) // forward
+    {
+        selectedHotbarIndex--;
+    }
+    else if (Input.GetAxis("Mouse ScrollWheel") < 0 ) // backwards
+    {
+        selectedHotbarIndex++;
+    }
+
+    selectedHotbarIndex = selectedHotbarIndex % 10;
+    if(selectedHotbarIndex<0) {
+        selectedHotbarIndex += 10;
+    }
+    
+    for(let i = 0; i < 10; i++) {
+        let testImage = hotbar[i].img;
+        let blockid = hotbar[i].blockID;
+        if(blockid>=0) {
+            let block = LocalGame.GetBlockFromID(blockid);
+
+            testImage.SetImage(LocalGame.GetTextureNameFromTextureID(block.blockTexture.front));
+        }else{
+
+            testImage.SetImage("blankSlot.png");
+        }
+        //hotbar[selectedHotbarIndex]
+        let col = (selectedHotbarIndex==i) ? 255 : 75;
+        if(i==selectedHotbarIndex) {
+            SlotSelector.SetLocalPosition(offsetX+16+(72*i),offsetY+8);
+        }
+        testImage.SetColor(col,col,col,255);
+    }
 });

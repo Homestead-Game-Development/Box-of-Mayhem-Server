@@ -11,6 +11,7 @@ Net.Register(200,function(reader) {
     let y = reader.readInt();
     let z = reader.readInt();
     let data = null;
+    let blockid = null;
 
     switch(mousebtn) {
         case 0://left
@@ -29,6 +30,7 @@ Net.Register(200,function(reader) {
 
         case 1://right
         console.log(`Rightclick: ${x}, ${y}, ${z}`);
+        blockid = reader.readInt();
         worldengine.worlds.overworld.SetBlock(Math.floor(x), Math.floor(z), Math.floor(y),1);
         worldengine.worlds.overworld.UpdateChunk(Math.floor(x/16),Math.floor(z/16),Math.floor(y/16));
         worldengine.worlds.overworld.SaveChunk(Math.floor(x/16),Math.floor(z/16),Math.floor(y/16));
@@ -38,7 +40,7 @@ Net.Register(200,function(reader) {
         data.writeInt(x);
         data.writeInt(y);
         data.writeInt(z);
-        data.writeInt(2);//blockID
+        data.writeInt(blockid);//blockID
         Net.FireAllClients(201, data);
 
         break;

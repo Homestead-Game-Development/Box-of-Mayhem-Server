@@ -37,7 +37,7 @@ events.Register("onClientUpdate", function() {
         let oldSpeed = LocalPlayer.GetSpeedVector();
         let transform = LocalPlayer.GetTransform();
 		let velocity = Vector3.zero;
-        
+
 		velocity = new Vector3(
             (transform.forward.x * Input.GetAxis("Vertical") * speed.walk / 60),
             0,
@@ -88,10 +88,11 @@ events.Register("onClientLateUpdate", function() {
             data.WriteInt(Math.floor(BlockPlacePosition.x));
             data.WriteInt(Math.floor(BlockPlacePosition.y));
             data.WriteInt(Math.floor(BlockPlacePosition.z));
+            data.WriteInt(hotbar[selectedHotbarIndex].blockID);
             Net.Send(200, data);
             console.log("Right: " + BlockPlacePosition.ToString());
             
-            LocalPlayerWorld.SetBlock(Math.floor(BlockPlacePosition.x), Math.floor(BlockPlacePosition.y), Math.floor(BlockPlacePosition.z), 1);
+            LocalPlayerWorld.SetBlock(Math.floor(BlockPlacePosition.x), Math.floor(BlockPlacePosition.y), Math.floor(BlockPlacePosition.z), hotbar[selectedHotbarIndex].blockID);
             
         }
         if(Input.GetMouseButtonDown(2)) {//Middle click
