@@ -37,11 +37,13 @@ events.Register("onClientUpdate", function() {
         let oldSpeed = LocalPlayer.GetSpeedVector();
         let transform = LocalPlayer.GetTransform();
 		let velocity = Vector3.zero;
+        
 		velocity = new Vector3(
             (transform.forward.x * Input.GetAxis("Vertical") * speed.walk / 60),
             0,
             (transform.forward.z * Input.GetAxis("Vertical") * speed.walk / 60)
         );
+
 		velocity = new Vector3(
             velocity.x + (transform.right.x * Input.GetAxis("Horizontal") * speed.walk / 60),
             0,
