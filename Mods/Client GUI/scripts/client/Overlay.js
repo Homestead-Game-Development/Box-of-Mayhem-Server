@@ -18,4 +18,14 @@ events.Register("onClientStart", function() {
     image.SetPosition((Screen.width / 2) - 256, 0);
     image.SetImage("basic_bar.png");
     */
+    let button = new GUI.Button("GUI_Overlay_InventoryButtonUp.png", "GUI_Overlay_InventoryButtonUp.png", "GUI_Overlay_InventoryButtonDown.png", function() {
+
+    });
+    button.SetSize(64, 64);
+    button.SetPosition(Screen.width - 190, 24);
+
+    let imgHotbar = new GUI.Image();
+    imgHotbar.SetSize(512,128);
+    imgHotbar.SetPosition((Screen.width / 2) - 256, 0);
+    imgHotbar.SetImage("basic_bar.png");
 });

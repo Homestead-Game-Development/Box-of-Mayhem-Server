@@ -6,18 +6,18 @@ events.register("onServerStart", function() {
 
     //Creating blocks
     console.log("Creating core blocks");
-    blockdb.createBlock                 (1,  "grass", "grass_side.block.block.png","grass_side.block.block.png","grass_side.block.block.png","grass_side.block.block.png","grass_top.block.block.png","dirt.block.block.png");
-    blockdb.createBlockMacro            (2,  "dirt", "dirt.block.block.png");
+    blockdb.createBlock                 (1,  "grass", "grass_side.block.png","grass_side.block.png","grass_side.block.png","grass_side.block.png","grass_top.block.png","dirt.block.png");
+    blockdb.createBlockMacro            (2,  "dirt", "dirt.block.png");
     blockdb.createBlockMacro            (3,  "stone", "stone.block.png");
-    blockdb.createBlockMacro            (4,  "cobblestone", "cobblestone.block.block.png");
+    blockdb.createBlockMacro            (4,  "cobblestone", "cobblestone.block.png");
     blockdb.createBlockMacro            (5,  "mossy cobblestone", "cobblestone_mossy.block.png");
-    blockdb.createBlockMacro            (6,  "stone bricks", "stonebrick.block.block.png");
+    blockdb.createBlockMacro            (6,  "stone bricks", "stonebrick.block.png");
     blockdb.createBlockMacro            (7,  "carved stone bricks", "stonebrick_carved.block.png");
     blockdb.createBlockMacro            (8,  "cracked stone bricks", "stonebrick_cracked.block.png");
     blockdb.createBlockMacro            (9,  "bricks", "brick.block.png");
-    blockdb.createBlockMacro            (10, "water", "water_still.block.block.png");
-    blockdb.createBlockMacro            (11, "sand", "sand.block.block.png");
-    blockdb.createBlockMacro            (12, "bedrock", "bedrock.block.block.png");
+    blockdb.createBlockMacro            (10, "water", "water_still.block.png");
+    blockdb.createBlockMacro            (11, "sand", "sand.block.png");
+    blockdb.createBlockMacro            (12, "bedrock", "bedrock.block.png");
     blockdb.createBlockMacro            (13, "obsidian", "obsidian.block.png");
     blockdb.createBlockMacro            (14, "gravel", "gravel.block.png");
     blockdb.createBlockMacro            (15, "Iron Ore", "iron_ore.block.png");
@@ -29,8 +29,8 @@ events.register("onServerStart", function() {
     blockdb.createBlock                 (21, "oak log", "log_oak.block.png","log_oak.block.png","log_oak.block.png","log_oak.block.png","log_oak_top.block.png","log_oak_top.block.png");
     blockdb.createBlockMacro            (22, "oak leaves", "leaves_oak.block.png");
     blockdb.createBlockMacro            (23, "oak planks", "oak_planks.block.png");
-    blockdb.createBlock                 (24, "farmland", "dirt.block.block.png","dirt.block.block.png","dirt.block.block.png","dirt.block.block.png","farmland_dry.block.png","dirt.block.block.png");
-    blockdb.createBlock                 (25, "farmland_wet", "dirt.block.block.png","dirt.block.block.png","dirt.block.block.png","dirt.block.block.png","farmland_wet.block.png","dirt.block.block.png");
+    blockdb.createBlock                 (24, "farmland", "dirt.block.png","dirt.block.png","dirt.block.png","dirt.block.png","farmland_dry.block.png","dirt.block.png");
+    blockdb.createBlock                 (25, "farmland_wet", "dirt.block.png","dirt.block.png","dirt.block.png","dirt.block.png","farmland_wet.block.png","dirt.block.png");
     blockdb.createBlockMacro            (26, "iron block", "iron_block.block.png");
     blockdb.createBlockMacro            (27, "coal block", "coal_block.block.png");
     blockdb.createBlockMacro            (28, "gold block", "gold_block.block.png");
@@ -47,7 +47,7 @@ events.register("onServerStart", function() {
     blockdb.createBlock                 (39, "bookshelf", "bookshelf.block.png","bookshelf.block.png","bookshelf.block.png","bookshelf.block.png","oak_planks.block.png","oak_planks.block.png");
     
     //Creating plants
-    blockdb.createPlant                 (2500, "tall_grass", "tall_grass.block.block.png");
+    blockdb.createPlant                 (2500, "tall_grass", "tall_grass.block.png");
     blockdb.createPlant                 (2501, "allium", "flower_allium.block.png");
     blockdb.createPlant                 (2502, "blue orchid", "flower_blue_orchid.block.png");
     blockdb.createPlant                 (2503, "dandelion", "flower_dandelion.block.png");
