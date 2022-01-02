@@ -1,9 +1,9 @@
 
 let mod = {}
 
-mod.name = "0_core_blocks";
+mod.name = "0_core_voxelsedge";
 mod.version = [0,0,1]
-mod.description = "A mod for testing API features";
+mod.description = "Game mod for Voxel's Edge";
 
 mod.requirements = ["0_core"];
 
