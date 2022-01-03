@@ -1,16 +1,12 @@
 let Game = {};
 Game.BroadcastMessage = function(msg) {
    let _msg = "[Server] " + msg;
+   _server.broadcastMessage(_msg);
    console.log(_msg);
-   authenticatedUserSockets.forEach(_ws => {
-      try {
-         reply(_ws, "Chat", {
-            msg:_msg
-         });
-      }catch(e) {
 
-      }
-   });
+   data = bufferWriter();
+   data.writeString(_msg);
+   Net.FireAllClients(2901, data);
 }
 
 module.exports = Game;

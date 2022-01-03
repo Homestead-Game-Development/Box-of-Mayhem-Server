@@ -31,6 +31,7 @@ try {
             }
         }
         evt.fire = function(...args) {
+            sender = _serverNetworkPlayername;
             subs.forEach((func) => {
                 func(evtData, ...args);
             })

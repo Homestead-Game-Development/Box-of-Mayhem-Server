@@ -10,23 +10,14 @@ try {
    let playerdatabase = {};
    let nametoplayer = {};
    let lastid = 0;
-   let _server = {};
+   _server = {};
+   _serverNetworkPlayername = ""; // This is used to store the last player who sent a message, this is used in particular for the network registration
 
    //Broadcasts a chat message
    _server.broadcastMessage = function(msg) {
-      console.log("Creating buffer message");
-      let writer = bufferWriter();
-      writer.writeInt      (messageids.client.Chat);
-      writer.writeString   (msg);
-
-      authenticatedUserSockets.forEach(_ws => {
-         try {
-            console.log("Sending to ws: " + _ws);
-            _ws.send(writer.getData());
-         }catch(e) {
-
-         }
-      });
+      data = bufferWriter();
+      data.writeString(msg);
+      Net.FireAllClients(201, data);
    }
 
    //Sends packets to everyone, except its sender
@@ -77,6 +68,7 @@ try {
          playerdatabase[userdata.id] = userdata;
 
          ws.on('message', (data) => {
+            _serverNetworkPlayername = userdata.username;
             switch(ws.binaryType) {
                case "nodebuffer":
                   /*try { 
@@ -191,13 +183,6 @@ try {
 
                               ws.send(writer.getData());
                               
-
-                              /*
-                              console.log("Sending hash list to " + userdata.username + " / " + JSON.stringify(assetstreamer.network_hashes).length);
-                              reply(
-                                 ws, "ReceiveHashList", {"hash_list":(assetstreamer.network_hashes)}
-                              );
-                              */
                            break;
 
                            case messageids.server.RequestCacheFile:
@@ -205,13 +190,7 @@ try {
                               let hashedImageFromIndex = assetstreamer.network_hashes[imgIndex];
                               let imgname = hashedImageFromIndex.name;
                               let img = assetstreamer.network_images[imgname];
-                              /*
-                              img.network_image.width = img.width;
-                              img.network_image.height = img.height;
-                              img.network_image.hash = img.hash;
-                              img.network_image.name = img.name;
-                              img.network_image.data = img.data;
-                              */
+
                               console.log("Sending " + imgname + " to " + userdata.username);
                               
                               //let writer = bufferWriter();

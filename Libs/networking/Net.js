@@ -54,7 +54,7 @@ Net.FireToSocket = function(msgID, data, socket) {
     let msg = bufferWriter();
     msg.writeInt      (messageids.client.ScriptData);
     msg.writeInt      (msgID);
-    console.log("data.length: " + data.getData().length);
+    //console.log("data.length: " + data.getData().length);
     msg.writeInt      (data.getData().length);
     msg.writeBytes    (data.getData());
     socket.send(msg.getData());
