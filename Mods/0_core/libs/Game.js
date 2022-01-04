@@ -1,7 +1,7 @@
 let Game = {};
 Game.BroadcastMessage = function(msg) {
    let _msg = "[Server] " + msg;
-   _server.broadcastMessage(_msg);
+   //_server.broadcastMessage(_msg);
    console.log(_msg);
 
    data = bufferWriter();

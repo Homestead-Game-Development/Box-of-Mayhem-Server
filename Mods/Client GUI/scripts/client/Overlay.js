@@ -52,13 +52,13 @@ let createChatbox = function() {
     for(let line=0; line<28; line++) {
         let newline = new GUI.Text("");
         newline.SetSize(4890, 16);
-        chatbox.chat.lineText = "NEWLINE: " + line;
+        chatbox.chat.lineText = "";
         newline.SetText(chatbox.chat.lineText);
         newline.SetParent(chatbox.chat.group);
         newline.SetTextColor(255,255,255,255);
         newline.SetLocalPosition(-(489/2)+8,134-(line*16)+79);
         chatbox.chat.lines[line] = newline;
-        fuckyoufuckinglines[line] = "" + line;
+        fuckyoufuckinglines[line] = "";
     }
 
 
@@ -245,7 +245,7 @@ events.Register("onClientUpdate", function() {
 let lastmessage = "";
 Net.Register(2901,function(reader) {
     let msg = reader.ReadString();
-    if(lastmessage!=msg) {
+    //if(lastmessage!=msg) {
         lastmessage = msg;
         console.log("MESSAGE RECEIVED: " + msg);
         if(chatbox.chat.lines) {
@@ -256,5 +256,5 @@ Net.Register(2901,function(reader) {
         }else{
             console.error("No testlines set, on loop! ?!?!?");
         }
-    }
+    //}
 });
