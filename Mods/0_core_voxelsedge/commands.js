@@ -11,12 +11,11 @@ commands.register = function(cmdName, triggeredFunction) {
 
 commands.execute = function(cmdname, player, username, ...args) {
     if(commands.commands[cmdname]) {
-        commands.commands[cmdname](player, ...args);
+        commands.commands[cmdname](username, ...args);
     }else{
         Game.SendMessageToPlayer(`<color="red">Command not registered: ${cmdname}<color=#005500>`, username);
         //player.sendMessage(`<color="red">Command not registered: ${cmdName}<color=#005500>`)
     }
-    console.log("f");
 }
 
 

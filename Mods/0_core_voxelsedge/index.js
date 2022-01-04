@@ -2,7 +2,12 @@
 let mymod = {}
 
 
+Events.register("onServerStart", function() {
+    ClientCache.AddScript(__dirname+"/client.js");
+})
+
 require("./commands.js");
+require("./commands/tp.js");
 
 
 events.register("onServerStart", function() {

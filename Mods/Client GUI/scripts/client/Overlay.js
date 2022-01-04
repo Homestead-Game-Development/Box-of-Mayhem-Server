@@ -78,8 +78,11 @@ let updateChatbox = function() {
         chatbox.input.inputfield.SetReadOnly(true);
         chatbox.input.inputfield.SetTextColor(125,125,125,255);
         chatbox.chat.group.SetLocalPosition(0,56);
-        if(Input.GetKeyDown(KeyCode.T) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) {
+        if(Input.GetKeyDown(KeyCode.T) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Slash)) {
+            chatbox.input.inputfield.SetText((Input.GetKeyDown(KeyCode.Slash)) ? "/" : chatbox.input.inputfield.GetText());
             chatbox.input.inputfield.SetReadOnly(false);
+            chatbox.input.inputfield.Select();
+            chatbox.input.inputfield.Unselect();
             chatbox.input.inputfield.Select();
             chatbox.active = true;
         }
@@ -88,10 +91,7 @@ let updateChatbox = function() {
         chatbox.input.inputfield.SetReadOnly(false);
         chatbox.input.inputfield.SetTextColor(255,255,255,255);
         chatbox.chat.group.SetLocalPosition(0,0);
-        if(Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) {
-            console.log("Chat message: " + chatbox.input.inputfield.GetText())
-
-            
+        if(Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Escape)) {
             let data = new BufferData();
             data.WriteString(chatbox.input.inputfield.GetText());
             Net.Send(1901, data);
@@ -247,7 +247,6 @@ Net.Register(2901,function(reader) {
     let msg = reader.ReadString();
     //if(lastmessage!=msg) {
         lastmessage = msg;
-        console.log("MESSAGE RECEIVED: " + msg);
         if(chatbox.chat.lines) {
             fuckyoufuckinglines[fuckyoufuckinglines.length] = msg;
             for(let i = 0; i < 28; i++) {
