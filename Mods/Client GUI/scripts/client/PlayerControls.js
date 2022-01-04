@@ -5,12 +5,13 @@ let speed = {
     run:800
 }
 let jumpPower = 5;
+let tabLockMouse = false;
 
 let txtPosition = null;
 events.Register("onClientStart", function() {
     txtPosition = new GUI.Text("Test");
     txtPosition.SetSize(512,24);
-    txtPosition.SetPosition(8, 512);
+    txtPosition.SetPosition(8, 256);
 });
 
 let handleCamera = function() {
@@ -51,7 +52,7 @@ let handlePlayerControls = function() {
     //this is dumb....
     //Yay for JInt....
     
-    if (Input.GetButton("Jump"))
+    if (Input.GetKeyDown(KeyCode.Space))
     {
         spdy = jumpPower;
     }
@@ -62,7 +63,7 @@ let handlePlayerControls = function() {
 events.Register("onClientUpdate", function() {
     if(Input.GetKeyDown(KeyCode.Tab))
 	{
-        Mouse.Lock(!Mouse.GetLocked());
+        tabLockMouse = !tabLockMouse;
 	}
 
     let pos = LocalPlayer.GetPosition();
@@ -121,7 +122,7 @@ events.Register("onClientLateUpdate", function() {
         }
     }
     //Logic for handling locking the mouse
-    Mouse.SetLocked(!(chatbox.active||chatbox.active));
+    Mouse.SetLocked(!(chatbox.active||chatbox.active||tabLockMouse));
 });
 
 Net.Register(201,function(reader) {

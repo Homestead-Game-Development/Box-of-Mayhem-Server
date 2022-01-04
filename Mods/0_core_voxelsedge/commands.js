@@ -9,12 +9,14 @@ commands.register = function(cmdName, triggeredFunction) {
     commands.commands[cmdName] = triggeredFunction
 };
 
-commands.execute = function(cmdname, player, ...args) {
+commands.execute = function(cmdname, player, username, ...args) {
     if(commands.commands[cmdname]) {
         commands.commands[cmdname](player, ...args);
     }else{
+        Game.SendMessageToPlayer(`<color="red">Command not registered: ${cmdname}<color=#005500>`, username);
         //player.sendMessage(`<color="red">Command not registered: ${cmdName}<color=#005500>`)
     }
+    console.log("f");
 }
 
 
@@ -60,7 +62,7 @@ events.register("onPlayerChat", function(eventData, username, chatmessage) {
 
         //Here we are handling the arguments
         let cmd = args.shift();
-        commands.execute(cmd, eventData.player, ...args);
+        commands.execute(cmd, eventData.player, username, ...args);
     }
 });
 

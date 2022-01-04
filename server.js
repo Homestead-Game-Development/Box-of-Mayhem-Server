@@ -8,16 +8,14 @@ try {
 
    authenticatedUserSockets = [];
    let playerdatabase = {};
-   let nametoplayer = {};
    let lastid = 0;
+   nametoplayer = {};
    _server = {};
    _serverNetworkPlayername = ""; // This is used to store the last player who sent a message, this is used in particular for the network registration
 
    //Broadcasts a chat message
    _server.broadcastMessage = function(msg) {
-      data = bufferWriter();
-      data.writeString(msg);
-      Net.FireAllClients(201, data);
+      Game.BroadcastMessage(msg);
    }
 
    //Sends packets to everyone, except its sender

@@ -1,3 +1,12 @@
+class BufferData {
+    constructor() {
+        this.data = [];
+    }
+
+    
+}
+
+
 bufferReader = function(data) {
     let p = {};
 

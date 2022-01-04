@@ -6,8 +6,16 @@ Events.register("onServerStart", function() {
 
 Net.Register(1901, function(reader) {
     let message = reader.readString();
-    console.log(sender + ": " + message);
-    Game.BroadcastMessage(sender + ": " + message);
+
+    
+    Events.fire("onPlayerChat", sender, message);
+
+    if(Events.storage["onPlayerChat"].data["sendMessage"]) {
+       console.log("Broadcasting to player");
+       //_server.broadcastMessage(Events.storage["onPlayerChat"].data["message"]);
+       console.log(sender + ": " + message);
+       Game.BroadcastMessage(sender + ": " + message);
+    }
 });
 
 Net.Register(200,function(reader) {

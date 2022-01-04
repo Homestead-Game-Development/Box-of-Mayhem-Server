@@ -30,15 +30,15 @@ player.logIn = function(name, ws) {
         let pdata = {};
 
         pdata.ws = ws;
+        pdata.username = name;
 
-        pdata.reply = function(id, data) {
-            ws.send(JSON.stringify({id:id, md:JSON.stringify(data)}));
+        pdata.reply = function(message) {
+            //ws.send(JSON.stringify({id:id, md:JSON.stringify(data)}));
+            Game.SendMessageToSocket(message, ws);
         }
 
         pdata.sendMessage = function(msg) {
-            pdata.reply("Chat", {
-                msg:msg
-            });
+            Game.SendMessageToSocket(message, ws);
         }
 
         //Any data that needs to be stored on the hard drive, such as position, store it here
