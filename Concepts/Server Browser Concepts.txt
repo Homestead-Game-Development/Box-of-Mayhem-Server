@@ -1,0 +1,5 @@
+Generalized info
+Quick join
+Large play/join server button
+Friends * Not direct friends list, but do something that taps into other platforms friends list *
+Server Browser
