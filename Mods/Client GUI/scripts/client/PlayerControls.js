@@ -6,12 +6,16 @@ let speed = {
 }
 let jumpPower = 5;
 let tabLockMouse = false;
+let timeToHoldPlayer = 3;
 
+let playerPosition = null;
 let txtPosition = null;
 events.Register("onClientStart", function() {
     txtPosition = new GUI.Text("Test");
     txtPosition.SetSize(512,24);
     txtPosition.SetPosition(8, 256);
+    playerPosition = LocalPlayer.GetPosition();
+    
 });
 
 let handleCamera = function() {
@@ -56,7 +60,20 @@ let handlePlayerControls = function() {
     {
         spdy = jumpPower;
     }
-    LocalPlayer.SetSpeed(spdx, spdy, spdz);
+
+    if(timeToHoldPlayer>0) {
+        //This handles holding the player for a few seconds, to give the chunks around the player time to load
+        timeToHoldPlayer = timeToHoldPlayer-Time.deltaTime;
+        if(timeToHoldPlayer<=0) {
+            console.log("Releasing player");
+        }
+        LocalPlayer.SetSpeed(0, 0, 0);
+        if(playerPosition!=null) {
+            LocalPlayer.SetPosition(playerPosition.x, playerPosition.y, playerPosition.z);
+        }
+    } else {
+        LocalPlayer.SetSpeed(spdx, spdy, spdz);
+    }
 }
 
 

@@ -10,6 +10,6 @@ commands.register("tp", function(senderusername, x, y, z) {
         data.writeInt(_z);
         Net.FireToPlayer(1002, data, senderusername);
     }else{
-        Game.SendMessageToPlayer("Invalid arguments, /tp <x> <y> <z>", senderusername);
+        Game.SendMessageToPlayer("<color=#ff9999>Invalid arguments</color> <b><color=#ffff99>/tp</color></b> <i><color=#9999ff><x> <y> <z></color></i>", senderusername);
     }
 });

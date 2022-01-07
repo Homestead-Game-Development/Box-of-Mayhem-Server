@@ -247,13 +247,15 @@ Net.Register(2901,function(reader) {
     let msg = reader.ReadString();
     //if(lastmessage!=msg) {
         lastmessage = msg;
-        if(chatbox.chat.lines) {
-            fuckyoufuckinglines[fuckyoufuckinglines.length] = msg;
-            for(let i = 0; i < 28; i++) {
-                chatbox.chat.lines[i].SetText(fuckyoufuckinglines[fuckyoufuckinglines.length-1-i]);
+        if(chatbox && chatbox.chat) {
+            if(chatbox.chat.lines) {
+                fuckyoufuckinglines[fuckyoufuckinglines.length] = msg;
+                for(let i = 0; i < 28; i++) {
+                    chatbox.chat.lines[i].SetText(fuckyoufuckinglines[fuckyoufuckinglines.length-1-i]);
+                }
+            }else{
+                console.error("No testlines set, on loop! ?!?!?");
             }
-        }else{
-            console.error("No testlines set, on loop! ?!?!?");
         }
     //}
 });

@@ -1,3 +1,5 @@
+
+//TP Command handler
 Net.Register(1002,function(reader) {
     //x, y, z
     let x = reader.ReadInt();

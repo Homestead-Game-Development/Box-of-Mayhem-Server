@@ -21,7 +21,7 @@ try {
    //Sends packets to everyone, except its sender
    _server.broadcastBufferFromSender = function(wsSender, data) {
       authenticatedUserSockets.forEach(_ws => {
-         if(_ws!=wsSender) {
+         if(_ws!==wsSender) {
             _ws.send(data);
             //reply( _ws, packetname, data );
          }
@@ -59,7 +59,7 @@ try {
          userdata.username = "N/A";
          userdata.authenticated = false;
          userdata.saveddata = {};
-         userdata.id = ++lastid;
+         userdata.id = ++lastid*64;
          userdata.ws = ws
          let hasSentInitialHash = false;
          let hasReceivedBlockData = false;
@@ -129,12 +129,12 @@ try {
 
                                           writer.writeInt(messageids.client.AcceptedSessionKey);
                                           writer.writeString(userdata.username);
-                                          ws.send(writer.getData());
+                                          userdata.ws.send(writer.getData());
 
                                        }else{
                                           //It has failed
                                           writer.writeInt(messageids.client.FailedSessionKey);
-                                          ws.send(writer.getData());
+                                          userdata.ws.send(writer.getData());
                                        }
                                     }catch(e) {
                                        console.error(e);
@@ -161,7 +161,7 @@ try {
                                  writer.writeString(assetstreamer.hash);
                                  writer.writeInt(assetstreamer.fileCount);
 
-                                 ws.send(writer.getData());
+                                 userdata.ws.send(writer.getData());
                                  hasSentInitialHash = true;
                               }
                            break;
@@ -179,7 +179,7 @@ try {
                                  writer.writeString(assetstreamer.network_hashes[i].hash);
                               }
 
-                              ws.send(writer.getData());
+                              userdata.ws.send(writer.getData());
                               
                            break;
 
@@ -201,7 +201,7 @@ try {
                               //Writing the actual image
                               writer.writeString(img.data);
 
-                              ws.send(writer.getData());
+                              userdata.ws.send(writer.getData());
          
                               //reply(ws, "ReceiveCacheImage", {img:img});
                            break;
@@ -217,7 +217,7 @@ try {
                                  for(let i = 0; i < blockdb.data.blocks.length; i++) {
                                     blockdb.data.blocks[i].writeToStream(writer);
                                  }
-                                 ws.send(writer.getData());
+                                 userdata.ws.send(writer.getData());
 
                                  //reply(ws, "ReceiveBlockData", blockdb.data);
                               }
@@ -241,7 +241,7 @@ try {
                               loggedInWorldWriter.writeInt(pos.x);
                               loggedInWorldWriter.writeInt(pos.y);
                               loggedInWorldWriter.writeInt(pos.z);
-                              ws.send(loggedInWorldWriter.getData());
+                              userdata.ws.send(loggedInWorldWriter.getData());
                               
                               //Sending the player the
                               for(const[key, value] of Object.entries(playerdatabase)) {
@@ -254,7 +254,7 @@ try {
                                     otherPlayerWriter.writeFloat(value.y);
                                     otherPlayerWriter.writeFloat(value.z);
                                     otherPlayerWriter.writeInt(value.id);
-                                    ws.send(otherPlayerWriter.getData());
+                                    userdata.ws.send(otherPlayerWriter.getData());
 
                                  }
                               }
@@ -306,7 +306,7 @@ try {
                               }
                               */
 
-                              ws.send(writer.getData());
+                              userdata.ws.send(writer.getData());
 
                            case messageids.server.UpdatePlayerPosition:
 
