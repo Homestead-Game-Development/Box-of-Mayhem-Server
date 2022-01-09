@@ -1,3 +1,6 @@
+License:
+GPL V2.0
+
 # How to setup
 How to setup:
 - Step 1: Install NodeJS
