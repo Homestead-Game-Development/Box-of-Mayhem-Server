@@ -8,3 +8,17 @@ Net.Register(1002,function(reader) {
     LocalPlayer.SetPosition(x, y, z);
     LocalPlayer.SetSpeed(0,0,0);
 });
+
+//Player chat messages
+Net.Register(1901, function(reader) {
+    let message = reader.readString();
+    
+    Events.fire("onPlayerChat", sender, message);
+
+    if(Events.storage["onPlayerChat"].data["sendMessage"]) {
+       console.log("Broadcasting to player");
+       //_server.broadcastMessage(Events.storage["onPlayerChat"].data["message"]);
+       console.log(sender + ": " + message);
+       Game.BroadcastMessage(sender + ": " + message);
+    }
+});
