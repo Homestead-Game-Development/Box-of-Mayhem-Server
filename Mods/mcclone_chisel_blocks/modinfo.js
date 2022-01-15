@@ -1,7 +1,7 @@
 
 let mod = {}
 
-mod.name = "mcclone_blocks";
+mod.name = "mcclone_chisel_blocks";
 mod.version = [0,0,1]
 mod.description = "All of the minecraft clone blocks";
 
