@@ -17,7 +17,6 @@ Net.Register(1901, function(reader) {
 
     if(Events.storage["onPlayerChat"].data["sendMessage"]) {
        console.log("Broadcasting to player");
-       //_server.broadcastMessage(Events.storage["onPlayerChat"].data["message"]);
        console.log(sender + ": " + message);
        Game.BroadcastMessage(sender + ": " + message);
     }
