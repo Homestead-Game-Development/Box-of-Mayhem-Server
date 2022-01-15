@@ -1,5 +1,12 @@
 
 events.register("onServerStart", function() {
+    //console.log("Creating core blocks");
+
+    //console.log("Creating core blocks");
+    
+});
+events.register("onServerStart", function() {
+    blockdb.createBlockMacro    (0, "missing", "0.block.png");//Default missing block
 
     //Creating blocks
     console.log("Creating core blocks");

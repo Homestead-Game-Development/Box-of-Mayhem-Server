@@ -1,7 +1,7 @@
 {
     "messages": [
         ["This game is still in development!", "Please report any bugs you find."],
-        ["Dont forget to join our discord!"],
+        ["Dont forget to join our discord!", "https://discord.gg/suqFT4DuvJ"],
         ["Want a feature?", "send us a message on discord!"],
         ["This server is just an example of the engine!", "This is how mods can impact your gameplay!"]
     ],
