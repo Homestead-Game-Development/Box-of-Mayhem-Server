@@ -1,9 +1,9 @@
 
 let mod = {}
 
-mod.name = "0_core_gamemode";
+mod.name = "voxelsedge";
 mod.version = [0,0,1]
-mod.description = "Core Gamemode Controller";
+mod.description = "Game mod for Voxel's Edge";
 
 mod.requirements = ["0_core"];
 
