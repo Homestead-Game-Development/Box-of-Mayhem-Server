@@ -14,4 +14,5 @@ Net.Register(1002,function(reader) {
 Net.Register(1400, function(reader) {
     let gamemode = reader.ReadString();
     console.log("New gamemode: " + gamemode);
+    GameMode.change(gamemode);
 });
