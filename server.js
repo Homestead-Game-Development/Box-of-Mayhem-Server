@@ -322,10 +322,18 @@ try {
                               userdata.x = p.readFloat();
                               userdata.y = p.readFloat();
                               userdata.z = p.readFloat();
-
-                              playerdata[userdata.username].worldpos.x = userdata.x;
-                              playerdata[userdata.username].worldpos.y = userdata.y;
-                              playerdata[userdata.username].worldpos.z = userdata.z;
+                              
+                              let pdata = playerdata[userdata.username];
+                              if(pdata) {
+                                 if(pdata.readyToWrite==true) {
+                                    playerdata[userdata.username].worldpos.x = userdata.x;
+                                    playerdata[userdata.username].worldpos.y = userdata.y;
+                                    playerdata[userdata.username].worldpos.z = userdata.z;
+                                    console.log("On");
+                                 }else{
+                                    console.log("Off");
+                                 }
+                              }
 
                               //Writing Broadcasting our position values to everyone else
                               let updatePosWriter = bufferWriter();

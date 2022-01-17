@@ -8,13 +8,15 @@ let jumpPower = 5;
 let tabLockMouse = false;
 let timeToHoldPlayer = 3;
 
-let playerPosition = null;
+let playerPosition = new Vector3(0, 0, 0);
 let txtPosition = null;
 events.Register("onClientStart", function() {
     txtPosition = new GUI.Text("Test");
     txtPosition.SetSize(512,24);
     txtPosition.SetPosition(8, 256);
-    playerPosition = LocalPlayer.GetPosition();
+    //playerPosition = LocalPlayer.GetPosition();
+    
+    LocalPlayer.SetCameraPosition(playerPosition.x, playerPosition.y+0.5, playerPosition.z);
     
 });
 
@@ -61,6 +63,9 @@ let handlePlayerControls = function() {
         spdy = jumpPower;
     }
 
+    
+
+
     if(timeToHoldPlayer>0) {
         //This handles holding the player for a few seconds, to give the chunks around the player time to load
         timeToHoldPlayer = timeToHoldPlayer-Time.deltaTime;
@@ -75,6 +80,17 @@ let handlePlayerControls = function() {
         LocalPlayer.SetSpeed(spdx, spdy, spdz);
     }
 }
+
+//Here we are listening for the core event for receiving the player initial data, we just want the initial position
+Net.Register(1300,function(reader) {
+    let x = reader.ReadFloat();
+    let y = reader.ReadFloat();
+    let z = reader.ReadFloat();
+    
+    //LocalPlayer.SetPosition(x+0.5, y, z+0.5);
+    playerPosition = new Vector3(x, y, z);
+    console.log("PlayerController: Moving playerPosition to " + x + ", " + y + ", " + z);
+});
 
 
 events.Register("onClientUpdate", function() {

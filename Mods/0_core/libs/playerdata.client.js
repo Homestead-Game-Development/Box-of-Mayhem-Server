@@ -1,22 +1,11 @@
 
 Net.Register(1300,function(reader) {
-    let action = reader.ReadInt();
     let x = reader.ReadInt();
     let y = reader.ReadInt();
     let z = reader.ReadInt();
-    let blockID = -1;
-    switch(action) {
-        case 0://Place
-            blockID = reader.ReadInt();
-            LocalPlayerWorld.SetBlock(x, y, z, blockID);
-        break;
+    console.log("Moving player to " + x+0.5 + ", " + y + ", " + z+0.5);
 
-        case 1://Break
-            LocalPlayerWorld.SetBlock(x, y, z, -1);
-        break;
-
-        default:
-            console.log("<color=yellow>Unhandled block place action: " + action + "</color>");
-        break;
-    }
+    //Here we are replying to the server, saying we have infact received the new starting position
+    let data = new BufferData();
+    Net.Send(1250, data);
 });

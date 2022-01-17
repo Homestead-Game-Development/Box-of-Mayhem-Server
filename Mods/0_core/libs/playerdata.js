@@ -20,8 +20,9 @@ Events.register("onPlayerPreLogin", function(eventData, username, websocket) {
         newpdata = require(playerfolder+"/data.json");
     }else{
         //Otherwise, speecify defaults
-        newpdata.worldpos = { x: 0, y: 20, z: 0 };
-        newpdata.world = "Overworld"
+        newpdata.worldpos = { x: ServerSettings.Get("WorldSpawnX"), y: ServerSettings.Get("WorldSpawnY"), z: ServerSettings.Get("WorldSpawnZ") };
+        newpdata.world = "Overworld";
+        newpdata.readyToWrite = false;
     }
     playerdata[username] = newpdata;
 });
@@ -33,9 +34,9 @@ Events.register("onPlayerPostLogin", function(eventData, username, websocket) {
     data = bufferWriter();
 
     // Here we are writing the initial position
-    data.writeInt(Math.floor(playerdata[username].worldpos.x));
-    data.writeInt(Math.floor(playerdata[username].worldpos.y));
-    data.writeInt(Math.floor(playerdata[username].worldpos.z));
+    data.writeFloat(playerdata[username].worldpos.x);
+    data.writeFloat(playerdata[username].worldpos.y);
+    data.writeFloat(playerdata[username].worldpos.z);
     
     // Now to send it to the player
     Net.FireToPlayer(1300, data, username);
@@ -44,5 +45,11 @@ Events.register("onPlayerPostLogin", function(eventData, username, websocket) {
 Events.register("onPlayerLogout", function(eventData, username, websocket) {
     //Here we are saving the player data
     let playerfolder = gameserver.path + "/Data/playerdata/"+(username.replace(/[^a-z0-9]/gi, '_').toLowerCase()) + "/";
-    fs.writeFileSync(playerfolder+"/data.json", JSON.stringify(playerdata[username]));
+    fs.writeFileSync(playerfolder+"/data.json", JSON.stringify(playerdata[username], null, '\t'));
+});
+
+Net.Register(1250, function(reader) {
+    let username = sender;
+    console.log(username + " has successfully finished ponged the message");
+    playerdata[username].readyToWrite = true;
 });

@@ -10,6 +10,7 @@ Game = require("./libs/Game.js");
 require("./libs/Entity/Entity.js");
 require("./events/creation.js");
 require("./events/registry.js");
+require("./libs/ServerSettings.js");
 
 //Here we are initializing the playerdata api
 require("./libs/playerdata.js");
