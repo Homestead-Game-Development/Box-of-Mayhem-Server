@@ -4,7 +4,7 @@ mkdir = function (dir) { if (!fs.existsSync(dir)) { fs.mkdirSync(dir); } }
 
 //Here we are constructing the initial folders we will be needing for the server
 mkdir("./Data/");
-mkdir("./Data/client/");
+mkdir("./Data/playerdata/");
 
 //Requiring all the networking libraries
 require("./Libs/networking/index.js");
@@ -31,7 +31,7 @@ server = require("./server.js");
 
 function WaitToLoad() {
     if(!assetstreamer.finished) {
-        setTimeout(WaitToLoad, 1000);
+        setTimeout(WaitToLoad, 100);
     }else{
         console.log("Server is starting");
         Events.fire("onServerStartPre");
@@ -44,4 +44,4 @@ function WaitToLoad() {
 
 
 
-setTimeout(WaitToLoad, 1000);
+setTimeout(WaitToLoad, 100);

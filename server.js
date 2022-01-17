@@ -1,3 +1,4 @@
+const { server } = require('websocket');
 
 try {
 
@@ -12,6 +13,9 @@ try {
    nametoplayer = {};
    _server = {};
    _serverNetworkPlayername = ""; // This is used to store the last player who sent a message, this is used in particular for the network registration
+   
+   gameserver = {};
+   gameserver.path = __dirname;
 
    //Broadcasts a chat message
    _server.broadcastMessage = function(msg) {
@@ -258,15 +262,20 @@ try {
 
                                  }
                               }
+                              Events.fire("onPlayerPreLogin", userdata.username, ws);
+                              Events.fire("onPlayerLogin", userdata.username, ws);
+                              Events.fire("onPlayerPostLogin", userdata.username, ws);
 
                               //Here we are telling everyone else that we have logged in
                               //This is our data
                               let otherPlayerWriter = bufferWriter();
                               otherPlayerWriter.writeInt(messageids.client.OtherPlayerLogedIn);
                               otherPlayerWriter.writeString(userdata.username);
+                              //Here we are setting the initial position
                               otherPlayerWriter.writeFloat(pos.x);
-                              otherPlayerWriter.writeFloat(pos.y);
+                              otherPlayerWriter.writeFloat(pos.y+100);
                               otherPlayerWriter.writeFloat(pos.z);
+                              //Here we are telling the player their ID on the server
                               otherPlayerWriter.writeInt(userdata.id);
                               authenticatedUserSockets.forEach(_ws => {
                                  if(_ws!=ws) {
@@ -275,7 +284,6 @@ try {
                               });
                               
                               
-                              Events.fire("onPlayerLogin", userdata.username, ws);
                            break;
                            
                            case messageids.server.RequestChunk:
@@ -314,6 +322,10 @@ try {
                               userdata.x = p.readFloat();
                               userdata.y = p.readFloat();
                               userdata.z = p.readFloat();
+
+                              playerdata[userdata.username].worldpos.x = userdata.x;
+                              playerdata[userdata.username].worldpos.y = userdata.y;
+                              playerdata[userdata.username].worldpos.z = userdata.z;
 
                               //Writing Broadcasting our position values to everyone else
                               let updatePosWriter = bufferWriter();
@@ -443,7 +455,9 @@ try {
 
          ws.onclose = () => {
             console.log(userdata.username + " has logged out");
+            Events.fire("onPlayerPreLogout", userdata.username, ws);
             Events.fire("onPlayerLogout", userdata.username, ws);
+            Events.fire("onPlayerPostLogout", userdata.username, ws);
             _server.broadcastMessage(userdata.username + " has logged out");
             
             let index = authenticatedUserSockets.indexOf(ws);

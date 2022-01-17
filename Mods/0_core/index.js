@@ -11,8 +11,11 @@ require("./libs/Entity/Entity.js");
 require("./events/creation.js");
 require("./events/registry.js");
 
+//Here we are initializing the playerdata api
+require("./libs/playerdata.js");
 
-console.log(`onPlayerLogin? ${events.storage["onPlayerLogin"]}`);
+
+// console.log(`onPlayerLogin? ${events.storage["onPlayerLogin"]}`);
 
 
 module.export = mymod

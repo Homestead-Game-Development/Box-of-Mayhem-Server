@@ -42,15 +42,13 @@ worldengine.CreateWorld = function (worldname) {
     let dirs = {};
     dirs.data = `./Data/worlds/${worldname}/data/`;
     dirs.chunks = `./Data/worlds/${worldname}/data/chunks/`;
-    dirs.players = `./Data/worlds/${worldname}/players/`;
 
     mkdir(`./Data/`);
     mkdir(`./Data/worlds/`);
     mkdir(`./Data/worlds/${worldname}/`);
     mkdir(dirs.data);
     mkdir(dirs.chunks);
-    mkdir(dirs.players);
-
+    
     let world = {}
 
     world.data = {};
