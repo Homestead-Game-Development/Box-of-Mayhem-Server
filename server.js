@@ -329,9 +329,6 @@ try {
                                     playerdata[userdata.username].worldpos.x = userdata.x;
                                     playerdata[userdata.username].worldpos.y = userdata.y;
                                     playerdata[userdata.username].worldpos.z = userdata.z;
-                                    console.log("On");
-                                 }else{
-                                    console.log("Off");
                                  }
                               }
 
