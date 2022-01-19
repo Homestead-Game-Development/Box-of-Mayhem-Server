@@ -8,10 +8,11 @@ let offsetY = -40;
 hotbar = {};
 
 let creativeMenu = GameMode.register("Creative", function() {
-    console.log("Creative Update!");
+    
 });
 
-
+let creativeMenuActive = false;
+let creativeMenuStorage = null;
 let creativeMenuStorageGroup = null;
 
 //======================================================================================
@@ -103,19 +104,43 @@ let updateHotbar = function() {
         testHotbar.SetSize(w, 80);
         testHotbar.SetPosition((Screen.width/2)-(w/2), Screen.height-80);
 
-        if (Input.GetAxis("Mouse ScrollWheel") > 0 ) // forward
-        {
-            selectedHotbarIndex--;
-        }
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0 ) // backwards
-        {
-            selectedHotbarIndex++;
+        if(!chatbox.active) {
+            //Here we are handling scrolling the menu
+            if(!creativeMenuActive) {
+                if ( Input.GetAxis("Mouse ScrollWheel") > 0 ) // forward
+                {
+                    selectedHotbarIndex--;
+                }
+                else if ( Input.GetAxis("Mouse ScrollWheel") < 0 ) // backwards
+                {
+                    selectedHotbarIndex++;
+                }
+                
+                if(Input.GetMouseButtonDown(2)) {//Middle click
+                    hotbar[selectedHotbarIndex].blockID = BlockID;
+                    hotbar[selectedHotbarIndex].img.RenderBlock(BlockID);
+                }
+            }
+            
+        
+            //Here we are handling hotbar shortcuts
+            if(Input.GetKeyDown(KeyCode.Alpha1)) {selectedHotbarIndex = 0;}
+            if(Input.GetKeyDown(KeyCode.Alpha2)) {selectedHotbarIndex = 1;}
+            if(Input.GetKeyDown(KeyCode.Alpha3)) {selectedHotbarIndex = 2;}
+            if(Input.GetKeyDown(KeyCode.Alpha4)) {selectedHotbarIndex = 3;}
+            if(Input.GetKeyDown(KeyCode.Alpha5)) {selectedHotbarIndex = 4;}
+            if(Input.GetKeyDown(KeyCode.Alpha6)) {selectedHotbarIndex = 5;}
+            if(Input.GetKeyDown(KeyCode.Alpha7)) {selectedHotbarIndex = 6;}
+            if(Input.GetKeyDown(KeyCode.Alpha8)) {selectedHotbarIndex = 7;}
+            if(Input.GetKeyDown(KeyCode.Alpha9)) {selectedHotbarIndex = 8;}
+            if(Input.GetKeyDown(KeyCode.Alpha0)) {selectedHotbarIndex = 9;}
         }
 
         selectedHotbarIndex = selectedHotbarIndex % 10;
         if(selectedHotbarIndex<0) {
             selectedHotbarIndex += 10;
         }
+
         
         for(let i = 0; i < 10; i++) {
             let blockid = hotbar[i].blockID;
@@ -144,26 +169,28 @@ let updateHotbar = function() {
 
 let createBlockMenu = function() {
     
-    let creativeMenu = new GUI.Image();
-    creativeMenu.SetColor(0,0,0,125);
-    creativeMenu.SetSize(w, Screen.height-160);
-    creativeMenu.SetPosition((Screen.width/2)-(w/2), 40);
-    creativeMenu.AddMask();
+    creativeMenuStorage = new GUI.Image();
+    creativeMenuStorage.SetColor(0,0,0,125);
+    creativeMenuStorage.SetSize(w, Screen.height-160);
+    creativeMenuStorage.SetPosition((Screen.width/2)-(w/2), 40);
+    creativeMenuStorage.AddMask();
+    creativeMenuStorage.SetActive(creativeMenuActive);
+    creativeMenuStorage.SetParent(creativeMenu);
 
     creativeMenuStorageGroup = new GUI.Group();
-    creativeMenu.AddToMask(creativeMenuStorageGroup);
+    creativeMenuStorage.AddToMask(creativeMenuStorageGroup);
     creativeMenuStorageGroup.SetLocalPosition(-48,-48);
     creativeMenuStorageGroup.SetSize(0,0);
 
     let blockIDs = LocalGame.GetBlockIDs();
 
-    let blocksPerRow = Math.floor(creativeMenu.GetWidth()/(64+8));
-    let offsetX = (creativeMenu.GetWidth()-((blocksPerRow*(64+8))-8))/2
+    let blocksPerRow = Math.floor(creativeMenuStorage.GetWidth()/(64+8));
+    let offsetX = (creativeMenuStorage.GetWidth()-((blocksPerRow*(64+8))-8))/2
 
     let _i = 0;
     blockIDs.forEach(block => {
-        let __x = ((_i%blocksPerRow)*(64+8))-(creativeMenu.GetWidth()/2)+offsetX;
-        let __y = (Math.floor(_i/blocksPerRow)*(64+8))-(creativeMenu.GetHeight()/2);
+        let __x = ((_i%blocksPerRow)*(64+8))-(creativeMenuStorage.GetWidth()/2)+offsetX;
+        let __y = (Math.floor(_i/blocksPerRow)*(64+8))-(creativeMenuStorage.GetHeight()/2);
 
         //Here we are creating the background for the item slot
         
@@ -177,6 +204,15 @@ let createBlockMenu = function() {
         __image.SetSize(64,64);
         __image.SetParent(creativeMenuStorageGroup);
         __image.SetLocalPosition(__x, __y);
+
+        __image.RegisterOnMouseClick(function() {
+            hotbar[selectedHotbarIndex].blockID = block.id;
+            if(block.isPlant) {
+                hotbar[selectedHotbarIndex].img.SetImage(LocalGame.GetTextureNameFromTextureID(LocalGame.GetBlockTexture(block.id).front));
+            }else{
+                hotbar[selectedHotbarIndex].img.RenderBlock(block.id);
+            }
+        });
         
         if(block.isPlant) {
             __image.SetImage(LocalGame.GetTextureNameFromTextureID(LocalGame.GetBlockTexture(block.id).front));
@@ -198,6 +234,10 @@ let updateBlockMenu = function() {
     {
         //creativeMenuStorageGroup.SetLocalPosition(localPos.x, localPos.y-48);
         creativeMenuStorageGroup.SetLocalPosition(localPos.x, -localPos.y-96);
+    }
+    if(Input.GetKeyDown(KeyCode.E) && !chatbox.active) {
+        creativeMenuActive = !creativeMenuActive;
+        creativeMenuStorage.SetActive(creativeMenuActive);
     }
 }
 

@@ -32,3 +32,9 @@ commands.register("gamemode", function(senderusername, gm) {
         Game.SendMessageToPlayer("<color=#ff9999>Invalid arguments</color> <b><color=#ffff99>/gamemode</color></b> <i><color=#9999ff><creative|survival|adventure></color></i>", senderusername);
     }
 });
+
+events.register("onPlayerLogin", function(eventData, username, websocket) {
+    data = bufferWriter();
+    data.writeString(playerdata[username].gamemode);
+    Net.FireToPlayer(1400, data, username);
+});

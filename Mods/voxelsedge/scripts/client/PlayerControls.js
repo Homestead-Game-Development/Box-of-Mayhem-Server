@@ -154,7 +154,7 @@ events.Register("onClientLateUpdate", function() {
         }
     }
     //Logic for handling locking the mouse
-    Mouse.SetLocked(!(chatbox.active||chatbox.active||tabLockMouse));
+    Mouse.SetLocked(!(chatbox.active||chatbox.active||tabLockMouse||creativeMenuActive));
 });
 
 Net.Register(201,function(reader) {
