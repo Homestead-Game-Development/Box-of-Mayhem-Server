@@ -49,12 +49,14 @@ let createHotbar = function() {
         
         hotbar[i] = {
             img:testImage,
+            slotbg:slotBG,
             blockID:i+1
         }
-        let block = LocalGame.GetBlockFromID(hotbar[i].blockID);
+        let slot = hotbar[i];//LocalGame.GetBlockFromID(hotbar[i].blockID);
 
-        if(block) {
-            testImage.SetImage(LocalGame.GetTextureNameFromTextureID(block.blockTexture.front));
+        if(slot) {
+            //testImage.SetImage(LocalGame.GetTextureNameFromTextureID(block.blockTexture.front));
+            testImage.RenderBlock(slot.blockID);
         }
         let col = (selectedHotbarIndex==i) ? 255 : 75;
         testImage.SetColor(col,col,col,255);
@@ -92,8 +94,55 @@ let createHotbar = function() {
     */
 }
 
+let createBlockMenu = function() {
+    
+    let creativeMenu = new GUI.Image();
+    creativeMenu.SetColor(0,0,0,125);
+    creativeMenu.SetSize(w, Screen.height-160);
+    creativeMenu.SetPosition((Screen.width/2)-(w/2), 40);
+
+    let blockIDs = LocalGame.GetBlockIDs();
+
+    let blocksPerRow = Math.floor(creativeMenu.GetWidth()/(64+8));
+    let offsetX = (creativeMenu.GetWidth()-((blocksPerRow*(64+8))-8))/2
+
+    let _i = 0;
+    blockIDs.forEach(block => {
+        let __x = ((_i%blocksPerRow)*(64+8))-(creativeMenu.GetWidth()/2)+offsetX;
+        let __y = (Math.floor(_i/blocksPerRow)*(64+8))-(creativeMenu.GetHeight()/2);
+
+        //Here we are creating the background for the item slot
+        
+        let __slotBG = new GUI.Image();
+        __slotBG.SetImage("little_background_frame.png");
+        __slotBG.SetSize(64,64);
+        __slotBG.SetParent(creativeMenu);
+        __slotBG.SetLocalPosition(__x, __y);
+
+        let __image = new GUI.Image();
+        __image.SetSize(64,64);
+        __image.SetParent(creativeMenu);
+        __image.SetLocalPosition(__x, __y);
+        
+        if(block.isPlant) {
+            __image.SetImage(LocalGame.GetTextureNameFromTextureID(LocalGame.GetBlockTexture(block.id).front));
+        }else{
+            __image.RenderBlock(block.id);
+        }
+        _i++;
+    });
+
+    /*
+    let testHotbarBackground = new GUI.Image();
+    testHotbarBackground.SetParent(testHotbar);
+    testHotbarBackground.SetSize(w,80);
+    testHotbarBackground.SetLocalPosition(offsetX, offsetY);
+    testHotbarBackground.SetColor(0,0,0,125);*/
+}
+
 let updateHotbar = function() {
     try {
+        
         testHotbar.SetSize(w, 80);
         testHotbar.SetPosition((Screen.width/2)-(w/2), Screen.height-80);
 
@@ -112,7 +161,6 @@ let updateHotbar = function() {
         }
         
         for(let i = 0; i < 10; i++) {
-            let testImage = hotbar[i].img;
             let blockid = hotbar[i].blockID;
             if(blockid>=0) {
                 let block = LocalGame.GetBlockFromID(blockid);
@@ -129,14 +177,17 @@ let updateHotbar = function() {
             if(i==selectedHotbarIndex) {
                 SlotSelector.SetLocalPosition(offsetX+16+(72*i),offsetY+8);
             }
-            testImage.SetColor(col,col,col,255);
+            hotbar[i].img.SetColor(col,col,col,255);
+            hotbar[i].slotbg.SetColor(col,col,col,255);
         }
     }catch(e) {
         console.error(e);
     }
 }
+
 events.Register("onClientStart", function() {
     createHotbar();
+    createBlockMenu();
 });
 
 events.Register("onClientUpdate", function() {

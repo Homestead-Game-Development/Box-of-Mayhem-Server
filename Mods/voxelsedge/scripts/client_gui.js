@@ -5,4 +5,5 @@ Events.register("onServerStart", function() {
     ClientCache.AddScript(__dirname+"/client/Overlay.gamemode.creative.js");
     ClientCache.AddScript(__dirname+"/client/Overlay.gamemode.survival.js");
     ClientCache.AddScript(__dirname+"/client/Overlay.gamemode.adventure.js");
+    ClientCache.AddScript(__dirname+"/client/Overlay.debug.js");
 })

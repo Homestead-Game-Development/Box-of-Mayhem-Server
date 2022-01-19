@@ -11,13 +11,12 @@ let timeToHoldPlayer = 3;
 let playerPosition = new Vector3(0, 0, 0);
 let txtPosition = null;
 events.Register("onClientStart", function() {
-    txtPosition = new GUI.Text("Test");
+    txtPosition = new GUI.Text("POSITIONTEXT");
     txtPosition.SetSize(512,24);
     txtPosition.SetPosition(8, 256);
     //playerPosition = LocalPlayer.GetPosition();
     
     LocalPlayer.SetCameraPosition(playerPosition.x, playerPosition.y+0.5, playerPosition.z);
-    
 });
 
 let handleCamera = function() {

@@ -105,7 +105,7 @@ try {
                               console.log("Handling key: " + key);
                               let encodedData = encodeURIComponent("{\"action\":\"get\",\"key\":\""+key+"\"}");
                               console.log(encodedData);
-                              http.get(`http://community.homesteadgamedevelopment.com:20001/`+encodeURIComponent(`{"action":"get","key":"${key}"}`), (response) => {
+                              http.get(`http://voxelsedge.com:20001/`+encodeURIComponent(`{"action":"get","key":"${key}"}`), (response) => {
                                  console.log("one?");
                                  let chunks_of_data = [];
       
