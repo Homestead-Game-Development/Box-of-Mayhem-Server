@@ -11,6 +11,9 @@ let creativeMenu = GameMode.register("Creative", function() {
     console.log("Creative Update!");
 });
 
+
+let creativeMenuStorageGroup = null;
+
 //======================================================================================
 //                                       Hotbar                                       //
 //======================================================================================
@@ -94,52 +97,6 @@ let createHotbar = function() {
     */
 }
 
-let createBlockMenu = function() {
-    
-    let creativeMenu = new GUI.Image();
-    creativeMenu.SetColor(0,0,0,125);
-    creativeMenu.SetSize(w, Screen.height-160);
-    creativeMenu.SetPosition((Screen.width/2)-(w/2), 40);
-
-    let blockIDs = LocalGame.GetBlockIDs();
-
-    let blocksPerRow = Math.floor(creativeMenu.GetWidth()/(64+8));
-    let offsetX = (creativeMenu.GetWidth()-((blocksPerRow*(64+8))-8))/2
-
-    let _i = 0;
-    blockIDs.forEach(block => {
-        let __x = ((_i%blocksPerRow)*(64+8))-(creativeMenu.GetWidth()/2)+offsetX;
-        let __y = (Math.floor(_i/blocksPerRow)*(64+8))-(creativeMenu.GetHeight()/2);
-
-        //Here we are creating the background for the item slot
-        
-        let __slotBG = new GUI.Image();
-        __slotBG.SetImage("little_background_frame.png");
-        __slotBG.SetSize(64,64);
-        __slotBG.SetParent(creativeMenu);
-        __slotBG.SetLocalPosition(__x, __y);
-
-        let __image = new GUI.Image();
-        __image.SetSize(64,64);
-        __image.SetParent(creativeMenu);
-        __image.SetLocalPosition(__x, __y);
-        
-        if(block.isPlant) {
-            __image.SetImage(LocalGame.GetTextureNameFromTextureID(LocalGame.GetBlockTexture(block.id).front));
-        }else{
-            __image.RenderBlock(block.id);
-        }
-        _i++;
-    });
-
-    /*
-    let testHotbarBackground = new GUI.Image();
-    testHotbarBackground.SetParent(testHotbar);
-    testHotbarBackground.SetSize(w,80);
-    testHotbarBackground.SetLocalPosition(offsetX, offsetY);
-    testHotbarBackground.SetColor(0,0,0,125);*/
-}
-
 let updateHotbar = function() {
     try {
         
@@ -185,6 +142,65 @@ let updateHotbar = function() {
     }
 }
 
+let createBlockMenu = function() {
+    
+    let creativeMenu = new GUI.Image();
+    creativeMenu.SetColor(0,0,0,125);
+    creativeMenu.SetSize(w, Screen.height-160);
+    creativeMenu.SetPosition((Screen.width/2)-(w/2), 40);
+    creativeMenu.AddMask();
+
+    creativeMenuStorageGroup = new GUI.Group();
+    creativeMenu.AddToMask(creativeMenuStorageGroup);
+    creativeMenuStorageGroup.SetLocalPosition(-48,-48);
+    creativeMenuStorageGroup.SetSize(0,0);
+
+    let blockIDs = LocalGame.GetBlockIDs();
+
+    let blocksPerRow = Math.floor(creativeMenu.GetWidth()/(64+8));
+    let offsetX = (creativeMenu.GetWidth()-((blocksPerRow*(64+8))-8))/2
+
+    let _i = 0;
+    blockIDs.forEach(block => {
+        let __x = ((_i%blocksPerRow)*(64+8))-(creativeMenu.GetWidth()/2)+offsetX;
+        let __y = (Math.floor(_i/blocksPerRow)*(64+8))-(creativeMenu.GetHeight()/2);
+
+        //Here we are creating the background for the item slot
+        
+        let __slotBG = new GUI.Image();
+        __slotBG.SetImage("little_background_frame.png");
+        __slotBG.SetSize(64,64);
+        __slotBG.SetParent(creativeMenuStorageGroup);
+        __slotBG.SetLocalPosition(__x, __y);
+
+        let __image = new GUI.Image();
+        __image.SetSize(64,64);
+        __image.SetParent(creativeMenuStorageGroup);
+        __image.SetLocalPosition(__x, __y);
+        
+        if(block.isPlant) {
+            __image.SetImage(LocalGame.GetTextureNameFromTextureID(LocalGame.GetBlockTexture(block.id).front));
+        }else{
+            __image.RenderBlock(block.id);
+        }
+        _i++;
+    });
+}
+
+let updateBlockMenu = function() {
+    let localPos = creativeMenuStorageGroup.GetLocalPosition()
+    if (Input.GetAxis("Mouse ScrollWheel") > 0 ) // forward
+    {
+        //creativeMenuStorageGroup.SetLocalPosition(localPos.x, localPos.y+48);
+        creativeMenuStorageGroup.SetLocalPosition(localPos.x, -localPos.y+96);
+    }
+    else if (Input.GetAxis("Mouse ScrollWheel") < 0 ) // backwards
+    {
+        //creativeMenuStorageGroup.SetLocalPosition(localPos.x, localPos.y-48);
+        creativeMenuStorageGroup.SetLocalPosition(localPos.x, -localPos.y-96);
+    }
+}
+
 events.Register("onClientStart", function() {
     createHotbar();
     createBlockMenu();
@@ -192,4 +208,5 @@ events.Register("onClientStart", function() {
 
 events.Register("onClientUpdate", function() {
     updateHotbar();
+    updateBlockMenu();
 });
