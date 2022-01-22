@@ -1,10 +1,11 @@
 let storage = {}
 let selectedGamemode = null;
+let sleectedGamemodeName = "";
 GameMode = {}
 
-GameMode.register = function(gamemodename, updateFunction) {
+GameMode.register = function(gamemodename, startFunction) {
     let _guigroup = new GUI.Group();
-    storage[gamemodename] = {"group":_guigroup,"update":updateFunction};
+    storage[gamemodename] = {"group":_guigroup,"start":startFunction};
     _guigroup.SetActive(false); // This disables the group, at the start.
     return _guigroup;//We are returning the GUI group to assign children to
 }
@@ -18,17 +19,17 @@ GameMode.change = function(gamemodename) {
         //Updating to the new gamemode
         selectedGamemode = storage[gamemodename];
         selectedGamemode.group.SetActive(true);
-        console.log("Changing gamemode menu to " + gamemodename)
+        console.log("Changing gamemode menu to " + gamemodename);
+        sleectedGamemodeName = gamemodename;
+        
+        if(selectedGamemode["start"]) {
+            selectedGamemode.start();
+        }
     }else{
         console.error("Invalid gamemode menu: " + gamemodename);
     }
 }
 
-
-events.Register("onClientUpdate", function() {
-    if(selectedGamemode) {
-        if(selectedGamemode["update"]) {
-            selectedGamemode.update();
-        }
-    }
-});
+GameMode.GetGameMode = function() {
+    return sleectedGamemodeName;
+}

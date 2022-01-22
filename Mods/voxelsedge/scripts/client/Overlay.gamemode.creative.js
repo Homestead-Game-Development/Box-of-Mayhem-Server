@@ -6,9 +6,10 @@ let w = 32+((64+8)*10);
 let offsetX = -(w/2);
 let offsetY = -40;
 hotbar = {};
+let creativeModePlayerPosition = new Vector3(0,0,0);
 
 let creativeMenu = GameMode.register("Creative", function() {
-    
+    creativeModePlayerPosition = "";
 });
 
 let creativeMenuActive = false;
@@ -179,7 +180,7 @@ let createBlockMenu = function() {
 
     creativeMenuStorageGroup = new GUI.Group();
     creativeMenuStorage.AddToMask(creativeMenuStorageGroup);
-    creativeMenuStorageGroup.SetLocalPosition(-48,-48);
+    creativeMenuStorageGroup.SetLocalPosition(-50,-50);
     creativeMenuStorageGroup.SetSize(0,0);
 
     let blockIDs = LocalGame.GetBlockIDs();
@@ -228,12 +229,12 @@ let updateBlockMenu = function() {
     if (Input.GetAxis("Mouse ScrollWheel") > 0 ) // forward
     {
         //creativeMenuStorageGroup.SetLocalPosition(localPos.x, localPos.y+48);
-        creativeMenuStorageGroup.SetLocalPosition(localPos.x, -localPos.y+96);
+        creativeMenuStorageGroup.SetLocalPosition(localPos.x, -localPos.y+00);
     }
     else if (Input.GetAxis("Mouse ScrollWheel") < 0 ) // backwards
     {
         //creativeMenuStorageGroup.SetLocalPosition(localPos.x, localPos.y-48);
-        creativeMenuStorageGroup.SetLocalPosition(localPos.x, -localPos.y-96);
+        creativeMenuStorageGroup.SetLocalPosition(localPos.x, -localPos.y-100);
     }
     if(Input.GetKeyDown(KeyCode.E) && !chatbox.active) {
         creativeMenuActive = !creativeMenuActive;

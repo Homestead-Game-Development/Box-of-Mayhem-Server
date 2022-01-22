@@ -47,9 +47,9 @@ let handlePlayerControls = function() {
         0,
         velocity.z + (transform.right.z * Input.GetAxis("Horizontal") * speed.walk / 60)
     );
-    
     //One of the bugs was that it wasnt detecting a proper double, so i just added "0.0" to it
     //to convert it, and make it work with the javascript parser..... yay development, yay bugs!!
+    
     let spdx = 0.0+(velocity.x);
     let spdy = 0.0+(oldSpeed.y);
     let spdz = 0.0+(velocity.z);
