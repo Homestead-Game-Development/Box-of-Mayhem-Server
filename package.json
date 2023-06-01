@@ -11,7 +11,7 @@
   "dependencies": {
     "@andreekeberg/imagedata": "^1.0.2",
     "folder-hash": "^4.0.1",
-    "simplex-noise": "^3.0.0",
+    "simplex-noise": "^3.0.1",
     "websocket": "^1.0.34",
     "ws": "^8.2.3"
   }
